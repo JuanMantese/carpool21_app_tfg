@@ -1,0 +1,100 @@
+{
+  "images": [
+    {
+      "size": "60x60",
+      "expected-size": "180",
+      "filename": "carppol21-logo-app-180@3x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "3x"
+    },
+    {
+      "size": "40x40",
+      "expected-size": "80",
+      "filename": "carppol21-logo-app-80@2x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "2x"
+    },
+    {
+      "size": "40x40",
+      "expected-size": "120",
+      "filename": "carppol21-logo-app-120@3x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "3x"
+    },
+    {
+      "size": "60x60",
+      "expected-size": "120",
+      "filename": "carppol21-logo-app-120@2x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "2x"
+    },
+    {
+      "size": "57x57",
+      "expected-size": "57",
+      "filename": "carppol21-logo-app-57@1x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "1x"
+    },
+    {
+      "size": "29x29",
+      "expected-size": "58",
+      "filename": "carppol21-logo-app-58@2x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "2x"
+    },
+    {
+      "size": "29x29",
+      "expected-size": "29",
+      "filename": "carppol21-logo-app-29@1x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "1x"
+    },
+    {
+      "size": "29x29",
+      "expected-size": "87",
+      "filename": "carppol21-logo-app-87@3x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "3x"
+    },
+    {
+      "size": "57x57",
+      "expected-size": "114",
+      "filename": "carppol21-logo-app-114@2x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "2x"
+    },
+    {
+      "size": "20x20",
+      "expected-size": "40",
+      "filename": "carppol21-logo-app-40@2x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "2x"
+    },
+    {
+      "size": "20x20",
+      "expected-size": "60",
+      "filename": "carppol21-logo-app-60@3x.png",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "idiom": "iphone",
+      "scale": "3x"
+    },
+    {
+      "size": "1024x1024",
+      "filename": "carppol21-logo-app-1024@1x.png",
+      "expected-size": "1024",
+      "idiom": "ios-marketing",
+      "folder": "Assets.xcassets/AppIcon.appiconset/",
+      "scale": "1x"
+    }
+  ]
+}
