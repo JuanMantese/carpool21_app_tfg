@@ -30,3 +30,22 @@ Developed by:
 - API_GOOGLE_MAPS=API_KEY
 
 Es necesario crear los 3 archivos para manejar las variables de entorno, sino el proyecto no levanta
+
+### Pasos para levantar el proyecto
+1- Instalacion de dependencias
+  Ejecutamos: 
+  ```
+  flutter packages pub run build_runner build
+  ```
+
+2- Ver los simuladores activos
+  Ejecutamos: 
+  ```
+  flutter devices
+  ```
+
+3- Correr la aplicación en el simulador
+  Ejecutamos: 
+  ``` 
+  flutter run -d id_dispositivo
+  ```
