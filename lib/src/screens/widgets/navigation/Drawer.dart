@@ -1,9 +1,9 @@
-
-import 'package:carpool_21_app/main.dart';
+// ignore_for_file: avoid_print
+import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
+import 'package:carpool_21_app/blocSocketIO/socket_io_event.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
-import 'package:carpool_21_app/src/screens/widgets/CustomDialog.dart';
-import 'package:carpool_21_app/src/screens/widgets/CustomDialogTrip.dart';
+import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationBloc.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationEvent.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationState.dart';
@@ -11,14 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:carpool_21_app/src/screens/utils/globals.dart' as globals;
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomDrawer extends StatelessWidget {
 
   final List<Role> roles;
   final User currentUser;
 
-  CustomDrawer({required this.roles, required this.currentUser, super.key});
+  const CustomDrawer({
+    required this.roles, 
+    required this.currentUser, 
+    super.key
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +54,7 @@ class CustomDrawer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${currentUser.name} ${currentUser.lastName}' ?? 'Juan Mantese Test',
+                            '${currentUser.name} ${currentUser.lastName}',
                             style: const TextStyle(
                               color: Color(0xFF006D59),
                               fontWeight: FontWeight.bold,
@@ -288,6 +291,8 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.power_settings_new, color: Color(0xFF006D59)),
           title: const Text('Cerrar Sesion'),
           onTap: () {
+            // Desconectando el Socket IO
+            context.read<SocketIOBloc>().add(DisconnectSocketIO());
             context.read<NavigationBloc>().add(Logout());
             context.go('/login');
 
@@ -356,13 +361,15 @@ class CustomDrawer extends StatelessWidget {
         //     Navigator.pushNamed(context, '/driver/finder');
         //   },
         // ),
-        // ListTile(
-        //   title: const Text('MapLocation'),
-        //   onTap: () {
-        //     Navigator.pop(context);
-        //     Navigator.pushNamed(context, '/driver/location');
-        //   },
-        // ),
+        ListTile(
+          title: const Text('MapLocation'),
+          onTap: () {
+            context.pop();
+            context.push('/driver/0/location');
+            // Navigator.pop(context);
+            // Navigator.pushNamed(context, '/driver/location');
+          },
+        ),
         // ListTile(
         //   title: const Text('Modal'),
         //   onTap: () {
@@ -391,6 +398,8 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.power_settings_new, color: Color(0xFF006D59)),
           title: const Text('Cerrar Sesion'),
           onTap: () {
+            // Desconectando el Socket IO
+            context.read<SocketIOBloc>().add(DisconnectSocketIO());
             context.read<NavigationBloc>().add(Logout());
             context.go('/login');
 

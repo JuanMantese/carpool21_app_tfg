@@ -1,5 +1,8 @@
-import 'package:another_flushbar/flushbar.dart';
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
+// ignore_for_file: avoid_print
+// import 'package:another_flushbar/flushbar.dart';
+import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
+import 'package:carpool_21_app/blocSocketIO/socket_io_event.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginBloc.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginEvent.dart';
@@ -37,7 +40,12 @@ class _LoginPageState extends State<LoginPage> {
           } else if (response is Success) {
             print('Success Data: ${response.data}');
             final authResponse = response.data as AuthResponse;
+
+            // Guardando información del usuario
             context.read<LoginBloc>().add(SaveUserSession(authResponse: authResponse));
+
+            // Conectando a Socket IO
+            context.read<SocketIOBloc>().add(ConnectSocketIO());
 
             if (authResponse.user!.roles!.length > 1) {
               // Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false);
@@ -78,32 +86,32 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Alert / Dialog / Custom Alert
-  void showCustomFlushbar(BuildContext context) {
-    Flushbar(
-      duration: const Duration(seconds: 3),
-      margin: const EdgeInsets.all(40),
-      padding: const EdgeInsets.all(10),
+  // void showCustomFlushbar(BuildContext context) {
+  //   Flushbar(
+  //     duration: const Duration(seconds: 3),
+  //     margin: const EdgeInsets.all(40),
+  //     padding: const EdgeInsets.all(10),
  
-      backgroundGradient: LinearGradient(
-        colors: [
-          Colors.pink.shade500,
-          Colors.pink.shade300,
-          Colors.pink.shade100
-        ],
-        stops: const [0.4, 0.7, 1],
-      ),
-      boxShadows: const [
-        BoxShadow(
-          color: Colors.black45,
-          offset: Offset(3, 3),
-          blurRadius: 3,
-        ),
-      ],
-      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-      forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
-      // title: 'Login exitoso',
-      message: 'Welcome to Flutter community.',
-      messageSize: 17,
-    ).show(context);
-  }
+  //     backgroundGradient: LinearGradient(
+  //       colors: [
+  //         Colors.pink.shade500,
+  //         Colors.pink.shade300,
+  //         Colors.pink.shade100
+  //       ],
+  //       stops: const [0.4, 0.7, 1],
+  //     ),
+  //     boxShadows: const [
+  //       BoxShadow(
+  //         color: Colors.black45,
+  //         offset: Offset(3, 3),
+  //         blurRadius: 3,
+  //       ),
+  //     ],
+  //     dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+  //     forwardAnimationCurve: Curves.fastLinearToSlowEaseIn,
+  //     // title: 'Login exitoso',
+  //     message: 'Welcome to Flutter community.',
+  //     messageSize: 17,
+  //   ).show(context);
+  // }
 }

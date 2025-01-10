@@ -1,7 +1,7 @@
-import 'package:carpool_21_app/src/data/dataSource/remote/services/usersService.dart';
-import 'package:carpool_21_app/src/domain/models/reservesAll.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/users_service.dart';
+import 'package:carpool_21_app/src/domain/models/reserves_all.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
-import 'package:carpool_21_app/src/domain/models/tripDetail.dart';
+import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:carpool_21_app/src/screens/utils/globals.dart';
 import 'package:equatable/equatable.dart';
@@ -21,9 +21,7 @@ class PassengerHomeViewState extends Equatable {
   final TripDetail? currentReserve;
   final ReservesAll? reservesAll;
 
-
-
-  PassengerHomeViewState({
+  const PassengerHomeViewState({
     this.responseStatus = PassengerHomeViewStatus.initial,
     this.errorMessage,
     this.pageIndex = 0,

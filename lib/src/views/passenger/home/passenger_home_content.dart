@@ -1,5 +1,5 @@
 import 'package:carpool_21_app/src/views/passenger/home/bloc/passenger_home_view_state.dart';
-import 'package:carpool_21_app/src/views/passenger/reserves/reservesItem.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/reserves_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -61,19 +61,17 @@ class PassengerHomeContent extends StatelessWidget {
                     color: Color(0xFF00A48B),
                   ),
                 ),
+
                 const SizedBox(height: 8),
 
-                // if(state.currentReserve != null)
-                //   ReservesItem(state.currentReserve, 'currentTrip')
-                // else
-                // _reserveCard(context),
-
                 (state.reservesAll != null &&
-                        state.reservesAll?.futureReservations != null &&
-                        state.reservesAll!.futureReservations.isNotEmpty
-                    ? ReservesItem(state.reservesAll?.futureReservations[0],
-                        'futureReservations')
-                    : _reserveCard(context)),
+                  state.reservesAll?.futureReservations != null &&
+                  state.reservesAll!.futureReservations.isNotEmpty
+                  ? ReservesItem(
+                      state.reservesAll?.futureReservations[0],
+                      'futureReservations'
+                    )
+                  : _reserveCard(context)),
               ],
             ),
           ),
@@ -185,7 +183,10 @@ class PassengerHomeContent extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10),
-                Icon(Icons.arrow_forward_rounded, color: Color(0xFF00A48B)),
+                Icon(
+                  Icons.arrow_forward_rounded, 
+                  color: Color(0xFF00A48B)
+                ),
               ],
             ),
           ),
@@ -210,9 +211,14 @@ class PassengerHomeContent extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.calendar_month_rounded,
-                      size: 50, color: Color(0xFF00A48B)),
+                  const Icon(
+                    Icons.calendar_month_rounded,
+                    size: 50, 
+                    color: Color(0xFF00A48B)
+                  ),
+
                   const SizedBox(width: 16),
+                  
                   SizedBox(
                     width: 250,
                     child: Text(

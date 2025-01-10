@@ -1,7 +1,7 @@
-import 'package:carpool_21_app/src/data/dataSource/remote/services/usersService.dart';
-import 'package:carpool_21_app/src/domain/models/carInfo.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/users_service.dart';
+import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
-import 'package:carpool_21_app/src/domain/models/tripsAll.dart';
+import 'package:carpool_21_app/src/domain/models/trips_all.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:equatable/equatable.dart';
 

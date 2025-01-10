@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:carpool_21_app/src/data/api/apiConfig.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/authService.dart';
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/auth_service.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/error_utils.dart';
 import 'package:dio/dio.dart';

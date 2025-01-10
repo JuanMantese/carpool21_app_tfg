@@ -1,6 +1,6 @@
 
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginEvent.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginState.dart';

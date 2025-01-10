@@ -1,9 +1,8 @@
-
+// ignore_for_file: avoid_print
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationBloc.dart';
-import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationEvent.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +17,7 @@ class CustomNavigation extends StatelessWidget {
   final User currentUser;
   final int currentIndex;
 
-  CustomNavigation({
+  const CustomNavigation({
     super.key, 
     required this.scaffoldKey,
     required this.roles,
@@ -28,7 +27,8 @@ class CustomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Global Key ${globals.currentRole}');
+    print('Global Key - Current Role ${globals.currentRole}');
+
     return BlocProvider(
       create: (_) => NavigationBloc(GetIt.instance<AuthUseCases>()),
       child: BlocBuilder<NavigationBloc, NavigationState>(
@@ -73,14 +73,13 @@ class CustomNavigation extends StatelessWidget {
 
   // Action Navigation Bar Items - Rol validation
   void _onItemTapped(BuildContext context, int index, String currentRole) {
+    print('+++++++++++++++++++++++++++++++ inItemTapped $currentRole');
     if (currentRole == 'passenger') {
       switch (index) {
         case 0:
-          // context.read<NavigationBloc>().add(ShowInicio());
           context.go('/passenger/0');
           break;
         case 1:
-          // context.read<NavigationBloc>().add(ShowReservas());
           context.go('/passenger/1');
           break;
         case 2:
@@ -90,10 +89,10 @@ class CustomNavigation extends StatelessWidget {
     } else if (currentRole == 'driver') {
       switch (index) {
         case 0:
-          context.read<NavigationBloc>().add(ShowInicio());
+          context.go('/driver/0');
           break;
         case 1:
-          context.read<NavigationBloc>().add(ShowViaje());
+          context.go('/driver/1');
           break;
         case 2:
           scaffoldKey.currentState?.openEndDrawer(); // Open Drawer for Profile
@@ -132,17 +131,20 @@ class CustomNavigation extends StatelessWidget {
         _buildBottomNavigationBarItem(
           icon: Icons.home_outlined,
           label: 'Inicio',
-          isActive: state.navigationType == NavigationType.inicioDriver,
+          // isActive: state.navigationType == NavigationType.inicioDriver,
+          isActive: currentIndex == 0,
         ),
         _buildBottomNavigationBarItem(
           icon: Icons.directions_car_rounded,
           label: 'Viaje',
-          isActive: state.navigationType == NavigationType.viaje,
+          // isActive: state.navigationType == NavigationType.viaje,
+          isActive: currentIndex == 1,
         ),
         _buildBottomNavigationBarItem(
           icon: Icons.account_circle_outlined,
           label: 'Perfil',
-          isActive: state.navigationType == NavigationType.perfil,
+          // isActive: state.navigationType == NavigationType.perfil,
+          isActive: currentIndex == 3,
         ),
       ];
     } else {

@@ -1,6 +1,6 @@
-import 'package:carpool_21_app/src/screens/pages/carInfo/list/carItem.dart';
-import 'package:carpool_21_app/src/screens/pages/driver/trips/tripsItem.dart';
-import 'package:carpool_21_app/src/screens/widgets/CustomDialogTrip.dart';
+import 'package:carpool_21_app/src/screens/pages/carInfo/list/car_item.dart';
+import 'package:carpool_21_app/src/views/driver/trips/trips_item.dart';
+import 'package:carpool_21_app/src/screens/widgets/custom_dialog_trip.dart';
 import 'package:carpool_21_app/src/views/driver/home/bloc/driver_home_view_state.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -68,9 +68,9 @@ class DriverHomeContent extends StatelessWidget {
             const SizedBox(height: 8),
             (state.driverTripAll != null &&
               state.driverTripAll?.futureTrips != null &&
-              state.driverTripAll!.futureTrips!.isNotEmpty
+              state.driverTripAll!.futureTrips.isNotEmpty
                 ? TripsItem(
-                    state.driverTripAll?.futureTrips?[0], 'futureTrips')
+                    state.driverTripAll?.futureTrips[0], 'futureTrips')
                 : _tripsCard(context)
             ),
           ],

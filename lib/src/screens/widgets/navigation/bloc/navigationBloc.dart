@@ -1,8 +1,8 @@
 // navigation_bloc.dart
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationEvent.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationState.dart';
@@ -11,16 +11,38 @@ import 'package:carpool_21_app/src/screens/utils/globals.dart' as globals;
 
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
-
   AuthUseCases authUseCases;
 
-  NavigationBloc(this.authUseCases) : super(NavigationState(navigationType: globals.currentRole == 'passenger' ? NavigationType.inicioPassenger : NavigationType.inicioDriver)) {
-    on<NavigationEvent>((event, emit) {
+  NavigationBloc(
+    this.authUseCases
+  ) : super(
+    NavigationState(
+      navigationType: globals.currentRole == 'passenger' 
+        ? NavigationType.inicioPassenger 
+        : NavigationType.inicioDriver
+    )
+  ) {
+
+    on<NavigationEvent>((event, emit) async {
+      print('NavigationEvent >>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
+
+      if (authResponse != null && authResponse.user != null) {
+        print('Entro en GetUserInfo - Navigation');
+      
+        List<Role> roles = authResponse.user!.roles?.map((role) => role).toList() ?? [];
+        print('roles >>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+        print('roles $roles');
+        print('roles >>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+
+      }
+
       if (event is ShowInicio) {
         emit(
           state.copyWith(
             navigationType: globals.currentRole == 'passenger' 
-              ? NavigationType.inicioPassenger : NavigationType.inicioDriver
+              ? NavigationType.inicioPassenger 
+              : NavigationType.inicioDriver
           )
         );
       } else if (event is ShowReservas && globals.currentRole == 'passenger') {
@@ -50,8 +72,10 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
     on<GetUserInfo>((event, emit) async {
       AuthResponse? authResponse = await authUseCases.getUserSession.run();
+
       if (authResponse != null && authResponse.user != null) {
         print('Entro en GetUserInfo - Navigation');
+      
         List<Role> roles = authResponse.user!.roles?.map((role) => role).toList() ?? [];
         print('roles $roles');
         emit(

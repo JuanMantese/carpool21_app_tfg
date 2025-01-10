@@ -1,7 +1,8 @@
+// ignore_for_file: avoid_print
 import 'dart:convert';
 import 'package:carpool_21_app/src/data/api/apiConfig.dart';
-import 'package:carpool_21_app/src/domain/models/driverPosition.dart';
-import 'package:carpool_21_app/src/domain/utils/listToString.dart';
+import 'package:carpool_21_app/src/domain/models/driver_position.dart';
+import 'package:carpool_21_app/src/domain/utils/list_to_string.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:http/http.dart' as http;
 

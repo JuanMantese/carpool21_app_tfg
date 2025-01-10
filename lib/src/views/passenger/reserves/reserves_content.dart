@@ -1,166 +1,125 @@
-import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reservesBloc.dart';
-import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reservesState.dart';
-import 'package:carpool_21_app/src/views/passenger/reserves/reservesItem.dart';
+// ignore_for_file: avoid_print
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_state.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/reserves_item.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservesContent extends StatelessWidget {
-  // final ReservesState state;
+  final ReservesState state;
 
-  const ReservesContent({super.key});
+  const ReservesContent(this.state, {super.key});
 
   @override
   Widget build(BuildContext context) {
     // print(state.testingReservesAll?.currentReserve);
 
     return Scaffold(
-      body: BlocBuilder<ReservesBloc, ReservesState>(
-        builder: (context, state) {
-          return Stack(
-            children: [
-              // Permite listar los reservas de un Pasajero - CurrentReserve, FutureReserves, HistoricalReserves
-              if (state.testingReservesAll != null)
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 170, bottom: 40),
-                    child: Column(
+      body: Stack(
+        children: [
+          // Permite listar los reservas de un Pasajero - CurrentReserve, FutureReserves, HistoricalReserves
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 170, bottom: 40),
+              child: Column(
+                children: [
+                  // Future Reservations
+                  if (state.reservesAll!.futureReservations.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // if (state.testingReservesAll!.currentReserve != null)
-                        //   Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       const Padding(
-                        //         padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        //         child: Text(
-                        //           'Viaje en Curso',
-                        //           style: TextStyle(
-                        //             fontSize: 18,
-                        //             fontWeight: FontWeight.bold,
-                        //             fontStyle: FontStyle.italic,
-                        //             color: Color(0xFF006D59),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       const Padding(
-                        //         padding: EdgeInsets.symmetric(horizontal: 20.0),
-                        //         child: Divider(
-                        //           color: Color(0xFF006D59),
-                        //           thickness: 2,
-                        //         ),
-                        //       ),
-                        //       Container(
-                        //         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        //         child: ReservesItem(
-                        //           state.testingReservesAll!.currentReserve,
-                        //           'currentTrip'
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-
-                        if (state
-                            .testingReservesAll!.futureReservations.isNotEmpty)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Text(
-                                  'Proximos Viajes',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                    color: Color(0xFF006D59),
-                                  ),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Divider(
-                                  color: Color(0xFF006D59),
-                                  thickness: 2,
-                                ),
-                              ),
-                              ...state.testingReservesAll!.futureReservations
-                                  .map((reserve) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: ReservesItem(reserve, 'futureTrips'),
-                                );
-                              }).toList(),
-                            ],
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text(
+                            'Proximos Viajes',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xFF006D59),
+                            ),
                           ),
-
-                        if (state
-                            .testingReservesAll!.pastReservations.isNotEmpty)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Text(
-                                  'Reservas Historicas',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    fontStyle: FontStyle.italic,
-                                    color: Color(0xFF006D59),
-                                  ),
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                                child: Divider(
-                                  color: Color(0xFF006D59),
-                                  thickness: 2,
-                                ),
-                              ),
-                              ...state.testingReservesAll!.pastReservations
-                                  .map((reserve) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child:
-                                      ReservesItem(reserve, 'historicalTrips'),
-                                );
-                              }).toList(),
-                            ],
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Divider(
+                            color: Color(0xFF006D59),
+                            thickness: 2,
                           ),
+                        ),
+                        ...state.reservesAll!.futureReservations.map((reserve) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: ReservesItem(reserve, 'futureTrips'),
+                          );
+                        }),
                       ],
                     ),
-                  ),
-                ),
 
-              // Header de Reservas
-              _headerTripsAvailable(context),
+                  // Historical Reservations
+                  if (state.reservesAll!.pastReservations.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Text(
+                            'Reservas Historicas',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              color: Color(0xFF006D59),
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Divider(
+                            color: Color(0xFF006D59),
+                            thickness: 2,
+                          ),
+                        ),
+                        ...state.reservesAll!.pastReservations
+                            .map((reserve) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20),
+                            child:
+                                ReservesItem(reserve, 'historicalTrips'),
+                          );
+                        }),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ),
 
-              // Decoration
-              const Positioned(
-                top: 108,
-                right: 108,
-                child: Icon(Icons.add_rounded, color: Colors.teal),
-              ),
-              const Positioned(
-                top: 66,
-                right: 90,
-                child: Icon(Icons.add_rounded, color: Colors.teal),
-              ),
-              const Positioned(
-                top: 100,
-                right: 76,
-                child: Icon(Icons.add_rounded, color: Colors.teal),
-              ),
-              const Positioned(
-                top: 76,
-                right: 56,
-                child: Icon(Icons.add_rounded, color: Colors.teal),
-              ),
-            ],
-          );
-        },
-      ),
+          // Header de Reservas
+          _headerTripsAvailable(context),
+
+          // Decoration
+          const Positioned(
+            top: 108,
+            right: 108,
+            child: Icon(Icons.add_rounded, color: Colors.teal),
+          ),
+          const Positioned(
+            top: 66,
+            right: 90,
+            child: Icon(Icons.add_rounded, color: Colors.teal),
+          ),
+          const Positioned(
+            top: 100,
+            right: 76,
+            child: Icon(Icons.add_rounded, color: Colors.teal),
+          ),
+          const Positioned(
+            top: 76,
+            right: 56,
+            child: Icon(Icons.add_rounded, color: Colors.teal),
+          ),
+        ],
+      )
     );
   }
 
@@ -212,9 +171,10 @@ class ReservesContent extends StatelessWidget {
               child: Text(
                 'MIS RESERVAS',
                 style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 19),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 19
+                ),
               ),
             ),
           ],

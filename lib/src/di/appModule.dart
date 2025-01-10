@@ -2,77 +2,77 @@
 import 'package:carpool_21_app/src/data/api/apiConfig.dart';
 import 'package:carpool_21_app/src/data/dataSource/local/sharedPref.dart';
 import 'package:carpool_21_app/src/data/dataSource/remote/service_handler.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/authService.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/carInfoService.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/driverTripRequestsService.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/auth_service.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/car_info_service.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/driver_trip_requests_service.dart';
 import 'package:carpool_21_app/src/data/dataSource/remote/services/driversPositionService.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/passengerRequestService.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/reserveService.dart';
-import 'package:carpool_21_app/src/data/dataSource/remote/services/usersService.dart';
-import 'package:carpool_21_app/src/data/repository/authRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/carInfoRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/driverPositionRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/driverTripRequestsRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/geolocationRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/passengerRequestRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/reserveRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/socketRepositoryImpl.dart';
-import 'package:carpool_21_app/src/data/repository/usersRepositoryImpl.dart';
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
-import 'package:carpool_21_app/src/domain/repository/authRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/carInfoRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/driverPositionRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/driverTripRequestsRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/geolocationRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/passengerRequestRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/reserveRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/socketRepository.dart';
-import 'package:carpool_21_app/src/domain/repository/usersRepository.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/changeRolUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/getUserSessionUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/getUserTokenUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/loginUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/logoutUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/registerUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/saveUserSessionUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/saveUserTokenUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/updateUserSessionUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/carInfoUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/createCarInfoUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/getCarInfoUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/getCarListUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/updateCarInfoUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/createTripRequestUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driverTripRequestUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/getAllTripsUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/getDriverTripsUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/getTimeAndDistanceUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/getTripDetailUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/drivers-position/createDriverPositionUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/drivers-position/deleteDriverPositionUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/drivers-position/driversPositionUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/drivers-position/getDriverPositionUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/createMarkerUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/findPositionUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/geolocationUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/getLocationDataUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/getMarkerUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/getPlacemarkDataUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/getPolylineUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/geolocation/getPositionStreamUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/passenger-request/getNerbyTripRequestUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/passenger-request/passengerRequestUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/reserves/createReserveUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/reserves/getAllReservesUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/reserves/getReserveDetailUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/reserves/reserveUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/socket/connectSocketUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/socket/disconnectSocketUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/socket/socketUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/users/getUserDetailUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/users/updateUserUseCase.dart';
-import 'package:carpool_21_app/src/domain/useCases/users/userUseCases.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/passenger_request_service.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/reserve_service.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/users_service.dart';
+import 'package:carpool_21_app/src/data/repository-impl/auth_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/car_info_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/driver_position_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/driver_trip_requests_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/geolocation_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/passenger_request_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/reserve_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/socket_repository_impl.dart';
+import 'package:carpool_21_app/src/data/repository-impl/users_repository_impl.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/repository/auth_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/car_info_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/driver_position_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/driver_trip_requests_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/geolocation_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/passenger_request_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/reserve_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/socket_repository.dart';
+import 'package:carpool_21_app/src/domain/repository/users_repository.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/change_rol_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/get_user_session_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/get_user_token_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/login_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/logout_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/register_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/save_user_session_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/save_user_token_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/update_user_session_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/car_info_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/create_car_info_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/get_car_info_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/get_car_list_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/update_car_info_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/create_trip_request_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driver_trip_request_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/get_all_trips_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/get_driver_trips_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/get_time_and_distance_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/get_trip_detail_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/drivers-position/create_driver_position_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/drivers-position/delete_driver_position_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/drivers-position/drivers_position_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/drivers-position/get_driver_position_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/create_marker_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/find_position_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/geolocation_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/get_location_data_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/get_marker_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/get_placemark_data_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/get_polyline_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/geolocation/get_position_stream_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/passenger-request/get_nerby_trip_request_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/passenger-request/passenger_request_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/reserves/create_reserve_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/reserves/get_all_reserves_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/reserves/get_reserve_detail_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/reserves/reserve_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/socket/connect_socket_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/socket/disconnect_socket_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/socket/socket_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/users/get_user_detail_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/users/update_user_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/users/user_use_cases.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -87,7 +87,7 @@ abstract class AppModule {
 
   @injectable
   Dio get dio => Dio(BaseOptions(
-    baseUrl: 'http://192.168.100.154:3000',
+    baseUrl: 'http://192.168.100.205:3000',
     contentType: 'application/json',
   ));
 
@@ -131,7 +131,7 @@ abstract class AppModule {
   ReserveService get reserveService => ReserveService(serviceHandler, token); // Reserve Service - Remote Storage
 
   // Socket IO - Inicializando Socket IO
-  Socket get socket => io('http://${ApiConfig.API_CARPOOL21}', 
+  Socket get socket => io(ApiConfig.API_CARPOOL21,
     OptionBuilder()
       .setTransports(['websocket']) // for Flutter or Dart VM
       .disableAutoConnect()  // disable auto-connection

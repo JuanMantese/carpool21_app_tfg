@@ -1,5 +1,5 @@
 // navigation_state.dart
-import 'package:carpool_21_app/src/data/dataSource/remote/services/usersService.dart';
+import 'package:carpool_21_app/src/data/dataSource/remote/services/users_service.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:equatable/equatable.dart';
@@ -31,7 +31,6 @@ class NavigationState extends Equatable {
     List<Role>? roles,
     User? currentUser,
     UsersService? userService,
-
   }) {
     return NavigationState(
       navigationType: navigationType ?? this.navigationType,
@@ -42,5 +41,10 @@ class NavigationState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [navigationType, roles];
+  List<Object?> get props => [
+    navigationType, 
+    roles,
+    currentUser,
+    userService
+  ];
 }

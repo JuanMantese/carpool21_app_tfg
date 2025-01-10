@@ -1,11 +1,11 @@
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
-import 'package:carpool_21_app/src/domain/models/carInfo.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
-import 'package:carpool_21_app/src/domain/models/tripsAll.dart';
+import 'package:carpool_21_app/src/domain/models/trips_all.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
-import 'package:carpool_21_app/src/domain/useCases/auth/authUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/car-info/carInfoUseCases.dart';
-import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driverTripRequestUseCases.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/car-info/car_info_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driver_trip_request_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/views/driver/home/bloc/driver_home_view_event.dart';
 

@@ -1,4 +1,4 @@
-import 'package:carpool_21_app/src/domain/models/authResponse.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/screens/utils/blocFormItem.dart';
 
 abstract class LoginEvent {}

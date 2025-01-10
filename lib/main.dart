@@ -1,4 +1,4 @@
-import 'package:carpool_21_app/blocProviders.dart';
+import 'package:carpool_21_app/bloc_providers.dart';
 import 'package:carpool_21_app/config/constants/enviroment.dart';
 import 'package:carpool_21_app/config/router/app_router.dart';
 import 'package:carpool_21_app/injection.dart';

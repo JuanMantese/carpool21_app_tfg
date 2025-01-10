@@ -1,6 +1,9 @@
-import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reservesBloc.dart';
-import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reservesEvent.dart';
-import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reservesState.dart';
+// ignore_for_file: avoid_print
+import 'package:carpool_21_app/src/domain/models/reserves_all.dart';
+import 'package:carpool_21_app/src/domain/utils/resource.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_bloc.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_event.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_state.dart';
 import 'package:carpool_21_app/src/views/passenger/reserves/reserves_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,11 +16,12 @@ class ReservesView extends StatefulWidget {
 }
 
 class _ReservesPageState extends State<ReservesView> with AutomaticKeepAliveClientMixin {
+  
   @override
   void initState() {
     super.initState();
-    
-    // Dispara el evento para obtener la información del usuario
+    print('Entrando al Historial de Reservas');
+    // Dispara el evento para obtener el historial de reservas usuario
     context.read<ReservesBloc>().add(GetReservesAll());
   }
 
@@ -28,16 +32,46 @@ class _ReservesPageState extends State<ReservesView> with AutomaticKeepAliveClie
     return Scaffold(
       body: BlocBuilder<ReservesBloc, ReservesState>(
         builder: (context, state) {
-          if (state.testingReservesAll == null) {
-            // Mostrar un indicador de carga mientras se obtiene la información del usuario
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            // return Container(child: Text('Aqui'),);
-            return const ReservesContent();
+          final response = state.response;
+
+          if (response is Loading) {
+            return const Center(child: CircularProgressIndicator());
+          } 
+
+          // Estado de éxito
+          else if (response is Success<ReservesAll>) {
+            final reservesAll = response.data;
+
+            // Mostrar un mensaje si no hay viajes disponibles
+            if (reservesAll.futureReservations.isEmpty && reservesAll.pastReservations.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No hay reservas disponibles.',
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+              );
+            }
+
+            return ReservesContent(state);
           }
-          // return pageList[state.pageIndex];
+
+          else if (response is ErrorData) {
+            // Muestra un mensaje y redirige al Home
+            Future.microtask(() {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(response.message)),
+              );
+              Navigator.of(context).pop(); // Redirige al Home
+            });
+
+            return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige
+          }
+
+          else {
+            return Container(
+              child: const Text('Error interno en TripsAvailable')
+            );
+          }
         },
       ),
     );
