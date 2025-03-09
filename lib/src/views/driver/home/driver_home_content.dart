@@ -17,6 +17,10 @@ class DriverHomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool existFutureTrips = state.driverTripAll != null &&
+         state.driverTripAll?.futureTrips != null &&
+         state.driverTripAll!.futureTrips.isNotEmpty;
+
     return Stack(children: [
       _headerHome(context),
       Padding(
@@ -41,6 +45,7 @@ class DriverHomeContent extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 22),
+            
             const Text(
               'Mis Vehiculos',
               style: TextStyle(
@@ -57,21 +62,26 @@ class DriverHomeContent extends StatelessWidget {
             ),
             const SizedBox(height: 22),
             
-            const Text(
-              'Viajes',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF00A48B),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Viajes',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF00A48B),
+                  ),
+                ),
+                if (existFutureTrips) 
+                  _buttonNewTrip(context),
+              ],
             ),
             const SizedBox(height: 8),
-            (state.driverTripAll != null &&
-              state.driverTripAll?.futureTrips != null &&
-              state.driverTripAll!.futureTrips.isNotEmpty
-                ? TripsItem(
-                    state.driverTripAll?.futureTrips[0], 'futureTrips')
-                : _tripsCard(context)
+
+            (existFutureTrips
+              ? TripsItem(state.driverTripAll?.futureTrips[0], 'futureTrips')
+              : _tripsCard(context)
             ),
           ],
         ),
@@ -154,10 +164,13 @@ class DriverHomeContent extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.drive_eta_rounded,
-                      size: 50, color: Color(0xFF00A48B)),
+                  const Icon(
+                    Icons.drive_eta_rounded,
+                    size: 50, 
+                    color: Color(0xFF00A48B)
+                  ),
                   const SizedBox(width: 16),
-                  Container(
+                  SizedBox(
                     width: 150,
                     child: Text(
                       'Sin vehículos registrados',
@@ -172,7 +185,6 @@ class DriverHomeContent extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // Navigator.pushNamed(context, '/car/register', arguments: '/driver/home');
                   context.push('/car/list/register', extra: {
                     'originPage': '/driver/0',
                   });
@@ -210,7 +222,8 @@ class DriverHomeContent extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         elevation: 4,
-        color: const Color(0xFFF9F9F9),
+        color: const Color(0xFFEDEDED),
+        surfaceTintColor: Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -218,10 +231,13 @@ class DriverHomeContent extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.calendar_month_rounded,
-                      size: 50, color: Color(0xFF00A48B)),
+                  const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 50, 
+                    color: Color(0xFF00A48B)
+                  ),
                   const SizedBox(width: 16),
-                  Container(
+                  SizedBox(
                     width: 150,
                     child: Text(
                       'Sin viajes programados',
@@ -234,36 +250,50 @@ class DriverHomeContent extends StatelessWidget {
                   ),
                 ],
               ),
-              ElevatedButton(
-                onPressed: () {
-                  print("Nuevo viaje");
-
-                  // Verificamos que el usuario tenga al menos 1 vehiculo registrado
-                  CustomDialogTrip(
-                    context: context,
-                  );
-                },
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: const Color(0xFFF9F9F9),
-                  side: const BorderSide(
-                    color: Color(0xFF00A98F),
-                  ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                ),
-                child: const Text(
-                  '+  Nuevo',
-                  style: TextStyle(
-                    color: Color(0xFF00A98F),
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
+              _buttonNewTrip(context)
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buttonNewTrip(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        // Verificamos que el usuario tenga al menos 1 vehiculo registrado
+        CustomDialogTrip(
+          context: context,
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        side: const BorderSide(
+          color: Color(0xFF00A98F),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+      ),
+      child: const Row(
+        children: [
+          Icon(
+            Icons.add,
+            size: 20,
+            color: Color(0xFF00A98F),
+          ),
+          SizedBox(width: 6),
+          Text(
+            'Nuevo',
+            style: TextStyle(
+              color: Color(0xFF00A98F),
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+        ],
       ),
     );
   }

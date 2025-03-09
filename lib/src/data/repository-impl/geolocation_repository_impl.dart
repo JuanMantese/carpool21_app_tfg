@@ -57,14 +57,25 @@ class GeolocationRepositoryImpl implements GeolocationRepository {
   }
 
   @override
-  Marker getMarker(String markerId, double lat, double lng, String title, String content, BitmapDescriptor imageMarker) {
+  Marker getMarker(
+    String markerId, 
+    double lat, 
+    double lng, 
+    String title, 
+    String content, 
+    BitmapDescriptor imageMarker,
+    {
+      Offset anchor = const Offset(0.5, 1), // Propiedad opcional con valor por defecto
+    }
+  ) {
     MarkerId id = MarkerId(markerId);
 
     Marker marker = Marker(
       markerId: id,
       icon: imageMarker,
       position: LatLng(lat,lng),
-      infoWindow: InfoWindow(title: title, snippet: content)
+      infoWindow: InfoWindow(title: title, snippet: content),
+      anchor: anchor
     );
     return marker;
   }

@@ -6,6 +6,6 @@ class ConnectSocketUseCase {
 
   ConnectSocketUseCase(this.socketRepository);
 
-  run() => socketRepository.connect();
+  run(String userId) => socketRepository.connect(userId);
 
 }

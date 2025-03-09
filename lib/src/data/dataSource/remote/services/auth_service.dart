@@ -5,7 +5,6 @@ import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:carpool_21_app/src/domain/utils/list_to_string.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
-import 'package:carpool_21_app/src/screens/pages/errors/error_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
@@ -156,82 +155,6 @@ class AuthService {
       print('Error register service: $error');
       return ErrorData(error.toString());
     }
-  }
-
-  // Future<Resource<User>> changeRol(String idRole) async {
-  //   try {
-  //     Uri url = Uri.http(ApiConfig.API_CARPOOL21, '/users/change-role'); // Creation of the URL path
-  //     Map<String, String> headers = {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': 'Bearer ${await token}'
-  //     }; // We specify that the information sent is of type JSON
-
-  //     String body = json.encode(
-  //       {'idRole': idRole}
-  //     );
-
-  //     // Making the request. I specify the URL, the headers and the body
-  //     final response = await http.patch(url, headers: headers, body: body);
-
-  //     // Decoding the information to be able to interpret it in Dart
-  //     final data = json.decode(response.body);
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       User userResponse = User.fromJson(data);
-  //       print('Data changeRol: ${userResponse.toJson()}');
-
-  //       return Success(userResponse);
-  //     } else {
-  //       print('Response status changeRol: ${response.statusCode}');
-  //       print('Response body changeRol: ${response.body}');
-  //       return ErrorData(listToString(data['message']));
-  //     }
-  //   } catch (error) {
-  //     print('Error changeRol Service: $error');
-  //     return ErrorData(error.toString());
-  //   }
-  // }
-
-  Future<Resource<User>> changeRol(String idRole) async {
-    try {
-      final response = await _dio.patch(
-        '/users/change-role',
-        data: {
-          'idRole': idRole
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ${await token}',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        User userResponse = User.fromJson(response.data);
-        print('Data changeRol: ${userResponse.toJson()}');
-        return Success(userResponse);
-      } else {
-        print('Response status changeRol: ${response.statusCode}');
-        print('Response body changeRol: ${response.data}');
-        return ErrorData(listToString(response.data['message']));
-      }
-    } catch (e) {
-      print('AuthService Error - ChangeRol');
-      if (e is TokenError) {
-        print(e.message);
-        return ErrorData(e.message);
-      } else if (e is DioException) {
-        print('Dio error: ${e.message}');
-        return ErrorData('Dio error: ${e.message}');
-      } else if (e is ConnectionError) {
-        print('Connection error: ${e.message}');
-        return ErrorData('Connection error: ${e.message}');
-      } else {
-        print('Unhandled error: $e');
-        return ErrorData('Unhandled error: $e');
-      }
-    }
-  }
+  } 
 
 }

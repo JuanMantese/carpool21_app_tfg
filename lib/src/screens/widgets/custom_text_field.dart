@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // ignore: must_be_immutable
 class CustomTextField extends StatelessWidget {
@@ -12,6 +13,10 @@ class CustomTextField extends StatelessWidget {
   IconData icon;
   EdgeInsetsGeometry padding;
 
+  // Variables para activar las expresiones regulares
+  final bool isNumber;
+  final bool isAlphabetic;
+
   CustomTextField({
     super.key, 
     required this.onChanged,
@@ -22,6 +27,8 @@ class CustomTextField extends StatelessWidget {
     required this.inputType,
     this.icon = Icons.visibility,
     this.padding = const EdgeInsets.only(top: 30, bottom: 30, right: 15, left: 15),
+    this.isNumber = false,
+    this.isAlphabetic = false,
   });
 
   @override
@@ -47,7 +54,25 @@ class CustomTextField extends StatelessWidget {
           counterText: "", // buildCounter to hide the counter maxLength
         ),
         keyboardType: inputType,
+        inputFormatters: _getInputFormatters(),
       ),
     );
+  }
+
+  // Esta función se encarga de devolver los InputFormatters según las condiciones
+  List<TextInputFormatter> _getInputFormatters() {
+    List<TextInputFormatter> formatters = [];
+    
+    // Si isNumber es true, permite solo números
+    if (isNumber) {
+      formatters.add(FilteringTextInputFormatter.allow(RegExp(r'^\d+$')));
+    }
+    
+    // Si isAlphabetic es true, permite solo letras
+    if (isAlphabetic) {
+      formatters.add(FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z\s]+$')));
+    }
+    
+    return formatters;
   }
 }

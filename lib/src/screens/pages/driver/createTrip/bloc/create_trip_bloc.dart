@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/domain/models/driver_trip_request.dart';
 import 'package:carpool_21_app/src/domain/models/time_and_distance_value.dart';
@@ -127,13 +128,22 @@ class CreateTripBloc extends Bloc<CreateTripEvent, CreateTripState> {
     });
 
     // Informando de los nuevos viajes disponibles
-    on<EmitNewTripRequestSocketIO>((event, emit) {
+    on<EmitNewTripRequestSocketIO>((event, emit) async {
       print('Emitiendo la creación de un nuevo viaje >>>>>>>>>>>>>>>>>>>>>');
 
-      if(socketIOBloc.state.socket != null) {
-        socketIOBloc.state.socket?.emit('new_trip_offer', {
-          'id_driver_request': 12
-        });
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
+
+      if (authResponse != null && authResponse.user != null) {
+        print('Datos del usuario obtenidos - Passenger Trip Available Detail: ${authResponse.user?.idUser}');
+
+        if(socketIOBloc.state.socket != null) {
+          print('Emitiendo');
+          socketIOBloc.state.socket?.emit('new_trip_offer', {
+            'id_driver_request': authResponse.user?.idUser
+          });
+        }
+      } else {
+        print('******************* Passenger Trip Available Detail Emit Socket - AuthResponse es Null *******************');
       }
     });
 

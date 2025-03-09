@@ -31,46 +31,6 @@ class DriverHomeViewBloc extends Bloc<DriverHomeViewEvent, DriverHomeViewState> 
     //   await authUseCases.logout.run();
     // });
 
-
-    // Usuario de prueba - Logica para obtener todos los datos del usuario
-    // void _setTestUser(GetUserInfo event, Emitter<DriverHomeState> emit) {
-    //   final User testUser = User(
-    //     idUser: 1,
-    //     name: 'Juan',
-    //     lastName: 'Mantese',
-    //     studentFile: 'SOF01669',
-    //     dni: 12345678,
-    //     phone: 3517872662,
-    //     address: '123 Calle Falsa',
-    //     email: 'juan.mantese@example.com',
-    //     password: 'password123',
-    //     passwordConfirm: 'password123',
-    //     contactName: 'Julian',
-    //     contactLastName: 'Mantese',
-    //     contactPhone: 3513751312,
-    //     photoUser: 'lib/assets/img/profile-icon.png',
-    //     notificationToken: null,
-    //     roles: [
-    //       Role(
-    //         idRole: "ADMIN",
-    //         name: "Administrador",
-    //         route: "/roles/admin",
-    //       ),
-    //       Role(
-    //         idRole: "PASSENGER",
-    //         name: "Pasajero",
-    //         route: "/roles/passenger",
-    //       ),
-    //     ],
-    //   );
-
-    //   emit(state.copyWith(
-    //     roles: testUser.roles?.map((role) => role).toList(),
-    //     currentUser: testUser,
-    //     userService: event.userService,
-    //   ));
-    // }
-
     on<GetUserInfo>((event, emit) async {
       print('GetUserInfo Home Driver --------------------');
       emit(state.copyWith(responseStatus: DriverHomeViewStatus.loading));

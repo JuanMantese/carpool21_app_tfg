@@ -3,6 +3,7 @@ import 'package:carpool_21_app/src/data/dataSource/remote/services/driver_trip_r
 import 'package:carpool_21_app/src/domain/models/driver_trip_request.dart';
 import 'package:carpool_21_app/src/domain/models/time_and_distance_value.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
+import 'package:carpool_21_app/src/domain/models/trip_status.dart';
 import 'package:carpool_21_app/src/domain/models/trips_all.dart';
 import 'package:carpool_21_app/src/domain/repository/driver_trip_requests_repository.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
@@ -48,5 +49,10 @@ class DriverTripRequestsRepositoryImpl implements DriverTripRequestsRepository {
   @override
   Future<Resource<List<TripDetail>>> getAvailableTrips() {
     return driverTripRequestsService.getAvailableTrips();
+  }
+
+  @override
+  Future<Resource<TripStatus>> updateTripStatus(int idTrip, int newStatus) {
+    return driverTripRequestsService.updateTripStatus(idTrip, newStatus);
   }
 }

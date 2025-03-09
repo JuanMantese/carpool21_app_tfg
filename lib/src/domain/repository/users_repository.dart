@@ -10,4 +10,7 @@ abstract class UsersRepository {
   // User --> Information that the server returns to us
   Future<Resource<User>> getUserDetail();
 
+  // User --> Information that the server returns to us
+  Future<Resource<User>> changeRol(String idRole);
+
 }

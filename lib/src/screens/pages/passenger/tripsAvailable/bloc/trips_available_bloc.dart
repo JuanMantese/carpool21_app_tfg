@@ -96,6 +96,9 @@ class TripsAvailableBloc extends Bloc<TripsAvailableEvent, TripsAvailableState> 
         // Esperar a que el evento se haya completado
         await controller.stream.first;
         await controller.close();
+
+        // Cerramos la escucha para no recibir más eventos hasta que se recargue la pantalla
+        socketIOBloc.state.socket?.off('created_trip_notification');
       }
     });
 

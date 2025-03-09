@@ -16,6 +16,7 @@ class FloatingMessage extends StatefulWidget {
   _FloatingMessageState createState() => _FloatingMessageState();
 }
 
+// Mensaje flotante de Nuevos Viajes Disponibles
 class _FloatingMessageState extends State<FloatingMessage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _widthAnimation;

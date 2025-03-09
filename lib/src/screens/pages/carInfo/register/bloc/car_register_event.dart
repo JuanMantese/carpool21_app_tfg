@@ -5,6 +5,11 @@ abstract class CarRegisterEvent {}
 
 class CarRegisterInitEvent extends CarRegisterEvent {}
 
+// Avanzar al siguiente paso para registro del Vehiculo
+class NextStep extends CarRegisterEvent {}
+// Retroceder al paso anterior para registro del Vehiculo
+class PreviousStep extends CarRegisterEvent {}
+
 // Input Brand Event
 class BrandChanged extends CarRegisterEvent {
   final BlocFormItem brandInput;
@@ -39,6 +44,36 @@ class ColorChanged extends CarRegisterEvent {
 class NroGreenCardChanged extends CarRegisterEvent {
   final BlocFormItem nroGreenCardInput;
   NroGreenCardChanged({ required this.nroGreenCardInput }); 
+}
+
+// Input InsuranceCompany Event
+class InsuranceCompanyChanged extends CarRegisterEvent {
+  final BlocFormItem insuranceCompanyInput;
+  InsuranceCompanyChanged({ required this.insuranceCompanyInput }); 
+}
+
+// Input InsuranceType Event
+class InsuranceTypeChanged extends CarRegisterEvent {
+  final BlocFormItem insuranceTypeInput;
+  InsuranceTypeChanged({ required this.insuranceTypeInput }); 
+}
+
+// Input InsuranceExpiration Event
+class InsuranceExpirationChanged extends CarRegisterEvent {
+  final BlocFormItem insuranceExpirationInput;
+  InsuranceExpirationChanged({ required this.insuranceExpirationInput }); 
+}
+
+// Input PolicyNumber Event
+class PolicyNumberChanged extends CarRegisterEvent {
+  final BlocFormItem policyNumberInput;
+  PolicyNumberChanged({ required this.policyNumberInput }); 
+}
+
+// Input PolicyExpirationDate Event
+class CuilCuitChanged extends CarRegisterEvent {
+  final BlocFormItem cuilCuitInput;
+  CuilCuitChanged({ required this.cuilCuitInput }); 
 }
 
 // Submit Form Event

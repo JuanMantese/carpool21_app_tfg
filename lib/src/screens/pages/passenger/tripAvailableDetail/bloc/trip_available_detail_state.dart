@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:carpool_21_app/src/domain/models/car_info.dart';
+import 'package:carpool_21_app/src/domain/models/payment_method.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:equatable/equatable.dart';
@@ -21,17 +23,20 @@ class TripAvailableDetailState extends Equatable {
   final String? departureTime;
   final double? compensation;
   final Driver? driver;
+  final CarInfo? vehicle;
+
+  final PaymentMethodModel paymentMethodSelected;
   final Resource? responseReserve;
   final Resource? responseTimeAndDistance;
-  // final BlocFormItem fareOffered;
-
   
 
-  const TripAvailableDetailState({
+  TripAvailableDetailState({
     this.controller,
     this.position,
     this.cameraPosition = const CameraPosition(target: LatLng(-31.3992803, -64.2766129), zoom: 13.0),
     this.markers = const <MarkerId, Marker>{},
+    this.polylines = const <PolylineId, Polyline>{},
+    this.routeBounds,
     this.pickUpText = '',
     this.pickUpLatLng,
     this.destinationText = '',
@@ -39,18 +44,19 @@ class TripAvailableDetailState extends Equatable {
     this.departureTime,
     this.compensation,
     this.driver,
-    this.polylines = const <PolylineId, Polyline>{},
-    this.routeBounds,
+    this.vehicle,
+    PaymentMethodModel? paymentMethodSelected,
     this.responseReserve,
     this.responseTimeAndDistance,
-    // this.fareOffered = const BlocFormItem(error: 'Ingresa la tarifa')
-  });
+  }) : paymentMethodSelected = paymentMethodSelected ?? PaymentMethodModel.defaultMethod();
 
   TripAvailableDetailState copyWith({
     Completer<GoogleMapController>? controller,
     Position? position,
     CameraPosition? cameraPosition,
     Map<MarkerId, Marker>? markers,
+    Map<PolylineId, Polyline>? polylines,
+    LatLngBounds? routeBounds,
     String? pickUpText,
     LatLng? pickUpLatLng,
     String? destinationText,
@@ -58,17 +64,18 @@ class TripAvailableDetailState extends Equatable {
     String? departureTime,
     double? compensation,
     Driver? driver,
-    Map<PolylineId, Polyline>? polylines,
-    LatLngBounds? routeBounds,
+    CarInfo? vehicle,
+    PaymentMethodModel? paymentMethodSelected,
     Resource? responseReserve,
     Resource? responseTimeAndDistance,
-    // BlocFormItem? fareOffered
   }) {
     return TripAvailableDetailState(
       controller: controller ?? this.controller,
       position: position ?? this.position,
       cameraPosition: cameraPosition ?? this.cameraPosition,
       markers: markers ?? this.markers,
+      polylines: polylines ?? this.polylines,
+      routeBounds: routeBounds ?? this.routeBounds,
       pickUpText: pickUpText ?? this.pickUpText,
       pickUpLatLng: pickUpLatLng ?? this.pickUpLatLng,
       destinationText: destinationText ?? this.destinationText,
@@ -76,30 +83,32 @@ class TripAvailableDetailState extends Equatable {
       departureTime: departureTime ?? this.departureTime,
       compensation: compensation ?? this.compensation,
       driver: driver ?? this.driver,
-      polylines: polylines ?? this.polylines,
-      routeBounds: routeBounds ?? this.routeBounds,
+      vehicle: vehicle ?? this.vehicle,
+      paymentMethodSelected: paymentMethodSelected ?? this.paymentMethodSelected,
       responseReserve: responseReserve ?? this.responseReserve,
       responseTimeAndDistance: responseTimeAndDistance ?? this.responseTimeAndDistance,
-      // fareOffered: fareOffered ?? this.fareOffered
     );
   }
 
 
   @override
   List<Object?> get props => [
+    controller, 
     position, 
+    cameraPosition, 
     markers, 
     polylines, 
-    controller, 
-    cameraPosition, 
-    pickUpLatLng, 
-    destinationLatLng, 
+    routeBounds,
     pickUpText, 
+    pickUpLatLng, 
     destinationText, 
+    destinationLatLng, 
     departureTime, 
     compensation,
+    driver,
+    vehicle,
+    paymentMethodSelected,
     responseReserve,
     responseTimeAndDistance, 
-    routeBounds,
   ];
 }

@@ -27,6 +27,9 @@ class ServiceHandler {
   ServiceHandler._internal(): _dio = Dio(BaseOptions(
     baseUrl: ApiConfig.API_CARPOOL21,
     contentType: 'application/json',
+    validateStatus: (status) {
+      return status! < 500; // Acepta todos los códigos de estado menores a 500
+    },
   )) {
     _initializeCacheOptions();
   }

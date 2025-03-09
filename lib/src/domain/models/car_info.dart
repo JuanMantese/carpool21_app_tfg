@@ -13,6 +13,11 @@ class CarInfo {
   String color;
   int year;
   String? nroGreenCard;
+  String? insuranceCompany;
+  String? insuranceType;
+  String? insuranceExpiration;
+  int? policyNumber;
+  int? cuilCuit;
 
   CarInfo({
     this.idDriver,
@@ -23,6 +28,11 @@ class CarInfo {
     required this.color,
     required this.year,
     this.nroGreenCard,
+    this.insuranceCompany,
+    this.insuranceType,
+    this.insuranceExpiration,
+    this.policyNumber,
+    this.cuilCuit
   });
 
   // Recibe una Lista con la informacion de todos los vehiculos del conductor y la convierte en JSON
@@ -44,6 +54,11 @@ class CarInfo {
     color: json["color"],
     year: json["year"] is String ? int.parse(json["year"]) : json["year"],
     nroGreenCard: json["greenCard"],
+    insuranceCompany: json["insuranceCompany"],
+    insuranceType: json["insuranceType"],
+    insuranceExpiration: _formatDateFromJson(json["insuranceExpiration"]),
+    policyNumber: json["policyNumber"] is String ? int.parse(json["policyNumber"]) : json["policyNumber"],
+    cuilCuit: json["cuilCuit"] is String ? int.parse(json["cuilCuit"]) : json["cuilCuit"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -54,5 +69,30 @@ class CarInfo {
     "color": color,
     "year": year,
     "greenCard": nroGreenCard,
+    "insuranceCompany": insuranceCompany,
+    "insuranceType": insuranceType,
+    "insuranceExpiration": _formatDateToJson(insuranceExpiration),
+    "policyNumber": policyNumber,
+    "cuil_cuit": cuilCuit,
   };
+
+   // Transforma fecha de YYYY-MM-DD a DD/MM/YYYY (de JSON a objeto)
+  static String? _formatDateFromJson(String? date) {
+    if (date == null) return null;
+    List<String> parts = date.split("-");
+    if (parts.length == 3) {
+      return "${parts[2]}/${parts[1]}/${parts[0]}"; // Convierte a DD/MM/YYYY
+    }
+    return date;
+  }
+
+  // Transforma fecha de DD/MM/YYYY a YYYY-MM-DD (de objeto a JSON)
+  static String? _formatDateToJson(String? date) {
+    if (date == null) return null;
+    List<String> parts = date.split("/");
+    if (parts.length == 3) {
+      return "${parts[2]}-${parts[1]}-${parts[0]}"; // Convierte a YYYY-MM-DD
+    }
+    return date;
+  }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:carpool_21_app/src/data/dataSource/remote/service_handler.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
+import 'package:carpool_21_app/src/domain/utils/list_to_string.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/error_utils.dart';
 import 'package:dio/dio.dart';
@@ -295,6 +296,59 @@ class UsersService {
         return ErrorData('Connection error: ${e.message}');
       } else {
         // Maneja otros tipos de errores
+        print('Unhandled error: $e');
+        return ErrorData('Unhandled error: $e');
+      }
+    }
+  }
+
+
+  Future<Resource<User>> changeRol(String idRole) async {
+    try {
+      // Construimos la ruta para realizar el cambio de Rol del usuario
+      String path = '/users/change-role';
+      
+      // Creamos el cuerpo de la solicitud con los datos del usuario
+      Map<String, dynamic> body = {
+        'idRole': idRole,
+      };
+
+      // Hacemos la petición con el método PATCH a la ruta construida
+      Response response = await serviceHandler.request(
+        "PATCH", 
+        path, 
+        1, 
+        168,
+        body: body,
+        refresh: true, // Forzamos la solicitud para evitar la caché
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        User userResponse = User.fromJson(response.data);
+        print('Data changeRol: ${userResponse.toJson()}');
+        return Success(userResponse);
+      } else {
+        print('Response status changeRol: ${response.statusCode}');
+        print('Response body changeRol: ${response.data}');
+        return ErrorData(listToString(response.data['message']));
+      }
+    } catch (e) {
+      print('AuthService Error - ChangeRol');
+      if (e is TokenError) {
+        print(e.message);
+        return ErrorData(e.message);
+      } else if (e is DioException) {
+        print('Dio error: ${e.message}');
+        print('Dio error: ${e.requestOptions}');
+        print('Dio error: ${e.error}');
+        print('Dio error: ${e.response}');
+
+
+        return ErrorData('Dio error: ${e.message}');
+      } else if (e is ConnectionError) {
+        print('Connection error: ${e.message}');
+        return ErrorData('Connection error: ${e.message}');
+      } else {
         print('Unhandled error: $e');
         return ErrorData('Unhandled error: $e');
       }

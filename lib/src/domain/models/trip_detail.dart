@@ -22,8 +22,9 @@ class TripDetail {
   double? distance; // En kilometros
   int? timeDifference; // En minutos
   double? compensation;
-  CarInfo? vehicle;
   String? observations;
+  int state;
+  CarInfo? vehicle;
   List<Reservations>? reservations;
 
   // GoogleDistanceMatrix? googleDistanceMatrix;
@@ -47,8 +48,9 @@ class TripDetail {
     this.distance,
     this.timeDifference,
     this.compensation,
-    this.vehicle,
     this.observations,
+    required this.state,
+    this.vehicle,
     this.reservations,
     // this.googleDistanceMatrix,
     // required this.pickupPosition,
@@ -83,8 +85,9 @@ class TripDetail {
     distance: json["distance"]?.toDouble(),
     timeDifference: json["timeDifference"],
     compensation: json["compensation"]?.toDouble(),
-    vehicle: json["vehicle"] != null ? CarInfo.fromJson(json["vehicle"]) : null,
     observations: json["observations"],
+    state: json["state"],
+    vehicle: json["vehicle"] != null ? CarInfo.fromJson(json["vehicle"]) : null,
     reservations: json["reservations"] != null ? List<Reservations>.from(json["reservations"].map((x) => Reservations.fromJson(x))) : null,
     // googleDistanceMatrix: json["google_distance_matrix"] != null ? GoogleDistanceMatrix.fromJson(json["google_distance_matrix"]) : null, 
     // pickupPosition: Position.fromJson(json["pickup_position"]),
@@ -108,8 +111,9 @@ class TripDetail {
     "distance": distance,
     "timeDifference": timeDifference,
     "compensation": compensation,
-    "vehicle": vehicle?.toJson(),
     "observations": observations,
+    "state": state,
+    "vehicle": vehicle?.toJson(),
     "reservations": reservations != null ? List<dynamic>.from(reservations!.map((x) => x.toJson())) : null,
     // "google_distance_matrix": googleDistanceMatrix?.toJson(),
     // "pickup_position": pickupPosition.toJson(),
@@ -134,7 +138,7 @@ class Driver {
     name: json["name"],
     lastName: json["lastName"],
     phone: json["phone"],
-    photo: json["photo"],
+    photo: json["photoUser"] ?? "",
   );
 
   Map<String, dynamic> toJson() => {

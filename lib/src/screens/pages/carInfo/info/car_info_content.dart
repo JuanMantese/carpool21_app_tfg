@@ -53,11 +53,11 @@ class CarInfoContent extends StatelessWidget {
             children: [
               _cardCarInfo(context),
               _cardCarData(context),
+              _cardCarInsurance(context),
 
               const Spacer(),
               CustomButtonAction(text: 'EDITAR VEHÍCULO', icon: Icons.edit, 
                 onTapFunction: () {
-                  // Navigator.pushNamed(context, '/car/update', arguments: car);
                   context.push('/car/list/update', extra: car);
                 }
               ),
@@ -163,7 +163,7 @@ class CarInfoContent extends StatelessWidget {
                     fontSize: 16
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   'Año: ${car?.year.toString()}',
                   style: TextStyle(
@@ -171,15 +171,7 @@ class CarInfoContent extends StatelessWidget {
                     fontSize: 16
                   ),
                 ),
-                const SizedBox(height: 8),
-                // Text(
-                //   'Asientos: ${car?.seats.toString()}' ?? 'Asientos',
-                //   style: TextStyle(
-                //     color: Colors.grey[900],
-                //     fontSize: 16
-                //   ),
-                // ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   'Color: ${car?.color}',
                   style: TextStyle(
@@ -187,7 +179,7 @@ class CarInfoContent extends StatelessWidget {
                     fontSize: 16
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   'Cedula Verde: ${car?.nroGreenCard.toString()}',
                   style: TextStyle(
@@ -197,6 +189,80 @@ class CarInfoContent extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _cardCarInsurance(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 35, right: 35, top: 10),
+      width: MediaQuery.of(context).size.width,
+      child: IntrinsicHeight(
+        child: Card(
+          elevation: 2.0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          child: Stack(
+            children: [
+              const Positioned(
+                top: 10,
+                right: 10,
+                child: Icon(Icons.verified_user_outlined, color: Color(0xFF276EF1)),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 20, bottom: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Seguro: ${car?.insuranceCompany}',
+                      style: TextStyle(
+                        color: Colors.grey[900],
+                        fontSize: 16
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Tipo de Seguro: ${car?.insuranceType}',
+                      style: TextStyle(
+                        color: Colors.grey[900],
+                        fontSize: 16
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Fecha de Expiración: ${car?.insuranceExpiration}',
+                      style: TextStyle(
+                        color: Colors.grey[900],
+                        fontSize: 16
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Poliza: ${car?.policyNumber.toString()}',
+                      style: TextStyle(
+                        color: Colors.grey[900],
+                        fontSize: 16
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'CUIL/CUIT: ${car?.cuilCuit}',
+                      style: TextStyle(
+                        color: Colors.grey[900],
+                        fontSize: 16
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

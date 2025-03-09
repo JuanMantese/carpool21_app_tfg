@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:carpool_21_app/src/domain/models/placemark_data.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,7 +18,10 @@ abstract class GeolocationRepository {
     double lng,
     String title,
     String content,
-    BitmapDescriptor imageMarker 
+    BitmapDescriptor imageMarker, 
+    {
+      Offset anchor = const Offset(0.5, 1), // Propiedad opcional con valor por defecto
+    }
   );
   
   // Tomando información del marker (direccion) segun la posición de la camara en el mapa

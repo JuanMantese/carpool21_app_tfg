@@ -12,8 +12,10 @@ import 'package:carpool_21_app/src/screens/pages/driver/home/driver_home.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapBookingInfo/driver_map_booking_info.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapSeeker/driver_map_seeker.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapLocation/driver_map_location.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/map_trip_driver.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/trip_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/home/passenger_home.dart';
+import 'package:carpool_21_app/src/screens/pages/passenger/mapTripPassenger/map_trip_passenger.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/reserve_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripAvailableDetail/trip_available_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/trips_available.dart';
@@ -152,6 +154,14 @@ final appRouter = GoRouter(
             return ReserveDetailPage(arguments: arguments);
           },
         ),
+        GoRoute(
+          path: 'reserve/mapTripPassenger',
+          name: 'Map Trip Passenger Live Screen',
+          builder: (context, state) {
+            final Map<String, dynamic> arguments = state.extra as Map<String, dynamic>;
+            return MapTripPassengerPage(arguments: arguments);
+          },
+        ),
       ]
     ),
 
@@ -197,6 +207,14 @@ final appRouter = GoRouter(
           path: 'location',
           name: 'Location Screen',
           builder: (context, state) => const DriverMapLocation(),
+        ),
+        GoRoute(
+          path: 'mapTripDriver',
+          name: 'Map Trip Driver Live Screen',
+          builder: (context, state) {
+            final Map<String, dynamic> arguments = state.extra as Map<String, dynamic>;
+            return MapTripDriverPage(arguments: arguments);
+          },
         ),
       ]
     ),

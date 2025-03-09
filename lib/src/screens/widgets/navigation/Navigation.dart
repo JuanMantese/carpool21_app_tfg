@@ -2,6 +2,7 @@
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/users/user_use_cases.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationBloc.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationState.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class CustomNavigation extends StatelessWidget {
     print('Global Key - Current Role ${globals.currentRole}');
 
     return BlocProvider(
-      create: (_) => NavigationBloc(GetIt.instance<AuthUseCases>()),
+      create: (_) => NavigationBloc(GetIt.instance<AuthUseCases>(), GetIt.instance<UserUseCases>()),
       child: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (context, state) {
           // final currentIndex = _getCurrentIndex(context, globals.currentRole, state.navigationType);
@@ -207,60 +208,4 @@ class CustomNavigation extends StatelessWidget {
   //   }
   // }
 
-  // Obtengo el valor actual del indice dependiendo de donde se encuentra el usuario
-  int _getCurrentIndex(BuildContext context, String currentRole, NavigationType navigationType) {
-    final GoRouterState state = GoRouterState.of(context);
-    final String currentLocation = state.uri.toString();
-    print('Aca: $currentLocation');
-
-    if (currentRole == 'passenger') {
-      // switch (navigationType) {
-      //   case NavigationType.inicioPassenger:
-      //     return 0;
-      //   case NavigationType.reservas:
-      //     return 1;
-      //   case NavigationType.perfil:
-      //     return 2;
-      //   default:
-      //     return 0;
-      // }
-
-      // IMPLEMENTACION CON SHELL ROUTE
-      // switch (currentLocation) {
-      //   case '/':
-      //   print('acaaaa');
-      //     return 0;
-      //   case '/reserves':
-      //     return 1;
-      //   case '/profile':
-      //     return 2;
-      //   default:
-      //     return 0;
-      // }
-    } else if (currentRole == 'driver') {
-      // switch (navigationType) {
-      //   case NavigationType.inicioDriver:
-      //     return 0;
-      //   case NavigationType.viaje:
-      //     return 1;
-      //   case NavigationType.perfil:
-      //     return 2;
-      //   default:
-      //     return 0;
-      // }
-
-      // IMPLEMENTACION CON SHELL ROUTE
-      // switch (currentLocation) {
-      //   case '/driver':
-      //     return 0;
-      //   case '/trips':
-      //     return 1;
-      //   case '/profile':
-      //     return 2;
-      //   default:
-      //     return 0;
-      // }
-    }
-    return 0; // Default index
-  }
 }

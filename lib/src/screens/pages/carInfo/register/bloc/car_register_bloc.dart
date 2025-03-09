@@ -17,6 +17,7 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
   CarInfoUseCases carInfoUseCases;
   UserUseCases userUseCases;
   final formKey = GlobalKey<FormState>();
+  final formKeyInsurance = GlobalKey<FormState>();
 
   // Constructor
   CarRegisterBloc(
@@ -27,7 +28,23 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
     
     // We initialize the form with the values ​​of the current User
     on<CarRegisterInitEvent>((event, emit) {
-      emit(state.copyWith(formKey: formKey));
+      emit(
+        state.copyWith(
+          formKey: formKey,
+          formKeyInsurance: formKeyInsurance
+        ));
+    });
+
+    on<NextStep>((event, emit) {
+      if (state.currentStep < 1) {
+        emit(state.copyWith(currentStep: state.currentStep + 1));
+      }
+    });
+
+    on<PreviousStep>((event, emit) {
+      if (state.currentStep > 0) {
+        emit(state.copyWith(currentStep: state.currentStep - 1));
+      }
     });
 
     on<BrandChanged>((event, emit) {
@@ -102,6 +119,67 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
       );
     });
 
+    // Insurance Events
+    on<InsuranceCompanyChanged>((event, emit) {
+      emit(
+        state.copyWith(
+          insuranceCompany: BlocFormItem(
+            value: event.insuranceCompanyInput.value,
+            error: event.insuranceCompanyInput.value.isEmpty ? 'Ingresá la compañía de seguros' : null
+          ),
+          formKeyInsurance: formKeyInsurance
+        )
+      );
+    });
+
+    on<InsuranceTypeChanged>((event, emit) {
+      emit(
+        state.copyWith(
+          insuranceType: BlocFormItem(
+            value: event.insuranceTypeInput.value,
+            error: event.insuranceTypeInput.value.isEmpty ? 'Ingresá el tipo de seguro' : null
+          ),
+          formKeyInsurance: formKeyInsurance
+        )
+      );
+    });
+
+    on<InsuranceExpirationChanged>((event, emit) {
+      emit(
+        state.copyWith(
+          insuranceExpiration: BlocFormItem(
+            value: event.insuranceExpirationInput.value,
+            error: event.insuranceExpirationInput.value.isEmpty ? 'Ingresá la fecha de expiración del seguro' : null
+          ),
+          formKeyInsurance: formKeyInsurance
+        )
+      );
+    });
+
+    on<PolicyNumberChanged>((event, emit) {
+      emit(
+        state.copyWith(
+          policyNumber: BlocFormItem(
+            value: event.policyNumberInput.value,
+            error: event.policyNumberInput.value.isEmpty ? 'Ingresá el número de póliza' : null
+          ),
+          formKeyInsurance: formKeyInsurance
+        )
+      );
+    });
+
+    on<CuilCuitChanged>((event, emit) {
+      emit(
+        state.copyWith(
+          cuilCuit: BlocFormItem(
+            value: event.cuilCuitInput.value,
+            error: event.cuilCuitInput.value.isEmpty ? 'Ingresá tu Nro de CUIL o CUIT' : null
+          ),
+          formKeyInsurance: formKeyInsurance
+        )
+      );
+    });
+
     on<FormSubmit>((event, emit) async {
       print('Marca: ${ state.brand.value }');
       print('Modelo: ${ state.model.value }');
@@ -109,12 +187,18 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
       print('Año del Vehículo: ${ state.year.value }');
       print('Color: ${ state.color.value }');      
       print('Cedula Verde: ${ state.nroGreenCard.value }');
+      print('Compañía de Seguros: ${state.insuranceCompany.value}');
+      print('Tipo Seguro: ${state.insuranceType.value}');
+      print('Expiración del Seguro: ${state.insuranceExpiration.value}');
+      print('Número de Póliza: ${state.policyNumber.value}');
+      print('CUIL CUIT: ${state.cuilCuit.value}');
 
       // Issuance of status change - Loading
       emit(
         state.copyWith(
           response: Loading(),
-          formKey: formKey
+          formKey: formKey,
+          formKeyInsurance: formKeyInsurance
         )
       );
 
@@ -127,7 +211,12 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
           patent: state.patent.value,
           year: int.parse(state.year.value),
           nroGreenCard: state.nroGreenCard.value,
-          color: state.color.value
+          color: state.color.value,
+          insuranceCompany: state.insuranceCompany.value,
+          insuranceType: state.insuranceType.value,
+          insuranceExpiration: state.insuranceExpiration.value,
+          policyNumber: int.parse(state.policyNumber.value),
+          cuilCuit: int.parse(state.cuilCuit.value),
         )
       );
 
@@ -135,7 +224,8 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
       emit(
         state.copyWith(
           response: response,
-          formKey: formKey
+          formKey: formKey,
+          formKeyInsurance: formKeyInsurance
         )
       );
     });

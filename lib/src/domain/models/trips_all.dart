@@ -13,8 +13,12 @@ class TripsAll {
 
   factory TripsAll.fromJson(Map<String, dynamic> json) => TripsAll(
     // currentTrip: TripDetail.fromJson(json["currentTrip"]),
-    futureTrips: List<TripDetail>.from(json["futureTrips"].map((x) => TripDetail.fromJson(x))),
-    pastTrips: List<TripDetail>.from(json["pastTrips"].map((x) => TripDetail.fromJson(x))),
+    futureTrips: json["futureTrips"] != []
+      ? List<TripDetail>.from(json["futureTrips"].map((x) => TripDetail.fromJson(x)))
+      : [],
+    pastTrips: json["pastTrips"] != []
+      ? List<TripDetail>.from(json["pastTrips"].map((x) => TripDetail.fromJson(x)))
+      : [],
   );
 
   Map<String, dynamic> toJson() => {

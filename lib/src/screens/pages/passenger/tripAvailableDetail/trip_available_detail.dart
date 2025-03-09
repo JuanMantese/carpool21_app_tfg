@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
@@ -34,6 +35,7 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
   late String departureTime;
   late double compensation;
   late Driver driver;
+  late CarInfo vehicle;
 
   bool _isLoading = false;
   bool _isMapControllerReady = false;
@@ -53,14 +55,18 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
       destinationLatLng = args['destinationLatLng'];
       destinationText = args['destinationText'];
       departureTime = args['departureTime'];
-      driver = args['driver'];
       compensation = args['compensation'];
+      driver = args['driver'];
+      vehicle = args['vehicle'];
       print('idTrip $idTrip');
       print('pickUpLatLng $pickUpLatLng');
       print('pickUpText $pickUpText');
       print('destinationLatLng $destinationLatLng');
       print('destinationText $destinationText');
       print('departureTime $departureTime');
+      print('compensation $compensation');
+      print('driver $driver');
+      print('vehicle $vehicle');
 
       context
         .read<TripAvailableDetailBloc>()
@@ -72,6 +78,7 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
           departureTime: departureTime,
           compensation: compensation,
           driver: driver,
+          vehicle: vehicle,
         ));
       
       // Aca se ejecuta la funcion para agregar la ruta en el mapa origen/destino
@@ -141,7 +148,10 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
             print(idReserve);
 
             // Emitimos la nueva oferta de viaje
-            context.read<TripAvailableDetailBloc>().add(EmitNewReserveRequestSocketIO());
+            context.read<TripAvailableDetailBloc>().add(EmitNewReserveRequestSocketIO(
+              idTrip: idTrip, 
+              idReserve: idReserve
+            ));
 
             // Reseteamos los valores del State
             context.read<TripAvailableDetailBloc>().add(ResetState());
@@ -166,8 +176,18 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
                 if (_isMapControllerReady || !_isLoading)
                   TripAvailableDetailContent(
                     state, 
-                    onReserve: () {
-                      context.read<TripAvailableDetailBloc>().add(CreateReserve(tripRequestId: idTrip));
+                    onReserve: (String? cardNumber, String? cardHolder, String? expiryDate, String? cvv) {
+                      context.read<TripAvailableDetailBloc>().add(
+                        CreateReserve(
+                          tripRequestId: idTrip,
+                          paymentMethod: state.paymentMethodSelected,
+                          saveNewCard: false,
+                          cardNumber: cardNumber,
+                          cardHolder: cardHolder,
+                          expiryDate: expiryDate,
+                          cvv: cvv
+                        )
+                      );
                     },
                     onMapInitialized: _onMapControllerInitialized,
                   ),

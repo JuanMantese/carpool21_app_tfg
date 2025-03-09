@@ -1,8 +1,10 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
+import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driver_trip_request_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/geolocation/geolocation_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/socket/socket_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_state.dart';
@@ -14,59 +16,21 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
 
   GeolocationUseCases geolocationUseCases;
   DriverTripRequestsUseCases driverTripRequestsUseCases;
+  SocketUseCases socketUseCases;
+  SocketIOBloc socketIOBloc;
 
   // Constructor
   TripDetailBloc(
     this.geolocationUseCases, 
-    this.driverTripRequestsUseCases
-  ): super(const TripDetailState()) {
-    
-    // final TripDetail testTripDetail = TripDetail(
-    //   idTrip: 1,
-    //   idDriver: 1,
-    //   pickupNeighborhood: 'Centro',
-    //   pickupText: "789 Oak St",
-    //   pickupLat: 37.7749,
-    //   pickupLng: -122.4294,
-    //   destinationNeighborhood: 'Campus Universitario',
-    //   destinationText: "123 Pine St",
-    //   destinationLat: 37.7949,
-    //   destinationLng: -122.4194,
-    //   availableSeats: 2,
-    //   departureTime: "18:30",
-    //   distance: 12.0,
-    //   timeDifference: 20, // Devuelve en minutos
-    //   vehicle: CarInfo(brand: "Honda", model: "Civic", patent: '123456', color: 'red', nroGreenCard: '1234', year: 2023),
-    //   compensation: 25.0,
-    //   observations: 'Encuentro en el Patio Olmos sobre la puerta de entrada que da a Bvd Illia',
-    //   reservations: [
-    //     Reservations(
-    //       idReservation: 1,
-    //       isPaid: true, 
-    //       passenger: Passenger(
-    //         idUser: 1, 
-    //         name: 'Julian', 
-    //         lastName: 'Mantese',
-    //         phone: '2517872662'
-    //       ),
-    //     ),
-    //     Reservations(
-    //       idReservation: 2, 
-    //       isPaid: true, 
-    //       passenger: Passenger(
-    //         idUser: 2,
-    //         name: 'Daniel', 
-    //         lastName: 'Mantese',
-    //         phone: '3517872662'
-    //       )
-    //     ),
-    //   ]
-    // );
-
+    this.driverTripRequestsUseCases,
+    this.socketUseCases, 
+    this.socketIOBloc
+  ): super(TripDetailState(
+    responseGetTripDetail: Loading(),
+    showNewReservesOnTrip: false
+  )) {
      
     on<GetTripDetail>((event, emit) async {
-      print('GetTripDetail ---------------------');
-      
       emit(
         state.copyWith(
           responseGetTripDetail: Loading(),
@@ -80,11 +44,13 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
       emit(
         state.copyWith(
           responseGetTripDetail: tripDetailRes,
+          showNewReservesOnTrip: false
         ),
       );
 
       if (tripDetailRes is Success<TripDetail>) {
-        print('Estado actualizado con los datos de la reserva: ${tripDetailRes.data}');
+        print('GetTripDetail ---------------------');
+        print(tripDetailRes.data);
 
         TripDetail tripDetail = tripDetailRes.data;
 
@@ -98,20 +64,34 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
         // Inicializando el Mapa
         add(TripDetailInitMap());
 
+        // Ejecutamos el evento para escuchar los cambios por Socket.IO
+        add(ListenTripReservesSocketIO());
+
       } else if (tripDetailRes is ErrorData<TripDetail>) {
         print('Error al obtener los datos del Detalle de Viaje: ${tripDetailRes.message}');
       }
     }); 
 
-    // on<TripDetailInitMap>((event, emit) async {
-    //   Completer<GoogleMapController> controller = Completer<GoogleMapController>();
+    // Iniciamos el viaje - Cambiamos el estado del viaje en la BD
+    on<ChangeTripStatus>((event, emit) async {
+      print('Entrando a ChangeTripStatus -------------------------------------');
 
-    //    emit(
-    //     state.copyWith(
-    //       controller: controller,
-    //     )
-    //   );
-    // });
+      emit(
+        state.copyWith(
+          responseStartTrip: Loading(),
+        )
+      );
+
+      // Actualizando el estado del viaje -> 3 = INCOURSE
+      Resource updateTripStatusRes = await driverTripRequestsUseCases.updateTripStatusUseCase.run(event.idTrip.toInt(), 3);
+
+      // Emitimos el estado según el resultado del Resource
+      emit(
+        state.copyWith(
+          responseStartTrip: updateTripStatusRes,
+        ),
+      );
+    });
 
     on<TripDetailInitMap>((event, emit) async {
       print('TripDetailInitMap -------------------------------------');
@@ -211,6 +191,43 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
         pickUpLatLng: state.pickUpLatLng!, 
         destinationLatLng: state.destinationLatLng!
       ));
+    });
+
+    // Escuchamos las nuevas reservas realizadas en el Viaje del conductor
+    on<ListenTripReservesSocketIO>((event, emit) async {
+      print('Escuchando reservas de pasajeros hechas al viajes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
+      print(socketIOBloc.state.socket);
+      print(socketIOBloc.state.socket?.connected);
+
+      if (socketIOBloc.state.socket != null && socketIOBloc.state.socket!.connected) {
+        // Creamos un StreamController para gestionar la emisión
+        final controller = StreamController<void>();
+        
+        // Esta NOTIFICACIÓN solo la escucha el usuario al cual pertenece el viaje
+        // socketIOBloc.state.socket?.on('new_reserve_trip_notification', (data) {
+        //   print('Notificación recibida: $data');
+        // });
+
+        socketIOBloc.state.socket?.on('create_reserve_trip_notification/${12}/${110}', (data) async {
+          print('Obteniendo la Nueva Reserva Creada - Socket IO');
+          print(data);
+
+          // Habilitando el mensaje de nuevos viajes disponibles
+          emit(state.copyWith(
+            showNewReservesOnTrip: true, 
+          ));
+
+          // Cuando el evento se haya procesado, cerramos el controller
+          controller.add(null);
+        });
+
+        // Esperar a que el evento se haya completado
+        await controller.stream.first;
+        await controller.close();
+
+        // Cerramos la escucha para no recibir más eventos hasta que se recargue la pantalla
+        socketIOBloc.state.socket?.off('create_reserve_trip_notification/${12}/${110}');
+      }
     });
 
     // Reseteo los valores del State al salir de pantalla

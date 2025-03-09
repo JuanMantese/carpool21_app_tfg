@@ -11,7 +11,7 @@ import 'package:intl/intl.dart';
 
 class ReserveDetailContent extends StatelessWidget {
 
-  final ReserveDetail? reserveDetail;
+  final ReserveDetail reserveDetail;
   final ReserveDetailState state;
   
   const ReserveDetailContent(
@@ -44,6 +44,8 @@ class ReserveDetailContent extends StatelessWidget {
               const SizedBox(height: 16),
               _buildVehicleInfo(context),
               _buildTripCard(context),
+              const SizedBox(height: 16),
+              _buildPayment(context),
               const SizedBox(height: 28),
               _buttonsAction(context)                  
             ],
@@ -54,7 +56,6 @@ class ReserveDetailContent extends StatelessWidget {
         CustomIconBack(
           margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
           onPressed: () {
-            // Navigator.pushNamedAndRemoveUntil(context, '/passenger/home', (Route<dynamic> route) => false,);
             context.go('/passenger/0');
           },
         ),
@@ -125,7 +126,7 @@ class ReserveDetailContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${reserveDetail?.driver.name} ${reserveDetail?.driver.lastName}',
+                      '${reserveDetail.driver.name} ${reserveDetail.driver.lastName}',
                       style: const TextStyle(
                         color: Color(0xFF006D59),
                         fontWeight: FontWeight.bold,
@@ -143,8 +144,8 @@ class ReserveDetailContent extends StatelessWidget {
   }
 
   Widget _buildTripInfoMap(BuildContext context) {
-    print(reserveDetail!.tripRequest.timeDifference);
-    final formattedTime = DateFormat.Hm().format(DateTime.parse(reserveDetail!.tripRequest.departureTime.toString()));
+    print(reserveDetail.tripRequest.timeDifference);
+    final formattedTime = DateFormat.Hm().format(DateTime.parse(reserveDetail.tripRequest.departureTime.toString()));
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -161,36 +162,21 @@ class ReserveDetailContent extends StatelessWidget {
                 ListTile(
                   leading: const Icon(
                     Icons.schedule_rounded,
-                    // color: Color(0xFF3b82f6),
                   ),
                   title: Text(
-                    reserveDetail != null ? formattedTime : '',
+                    formattedTime,
                   ),
                   titleTextStyle: const TextStyle(
                     fontSize: 14,
                     color: Colors.black
                   ),
                 ),
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.person_rounded,
-                //     // color: Color(0xFF3b82f6),
-                //   ),
-                //   title: Text(
-                //     reserveDetail != null ? reserveDetail!.tripRequest.timeDifference.toString() : '',
-                //   ),
-                //   titleTextStyle: const TextStyle(
-                //     fontSize: 14,
-                //     color: Colors.black
-                //   ),
-                // ),
                 ListTile(
                   leading: const Icon(
                     Icons.attach_money_rounded,
-                    // color: Color(0xFFdc2627),
                   ),
                   title: Text(
-                    reserveDetail != null ? reserveDetail!.tripRequest.compensation.toString() : ''
+                    reserveDetail.tripRequest.compensation.toString()
                   ),
                   titleTextStyle: const TextStyle(
                     fontSize: 14,
@@ -320,17 +306,32 @@ class ReserveDetailContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        reserveDetail?.tripRequest.vehicle?.brand ?? '',
+                        '${reserveDetail.tripRequest.vehicle?.brand ?? ''} ${reserveDetail.tripRequest.vehicle?.model ?? ''}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text('Patente: ${reserveDetail?.tripRequest.vehicle?.patent ?? ''}'),
-                      Text('Año: ${reserveDetail?.tripRequest.vehicle?.year ?? ''}'),
-                      Text('Color: ${reserveDetail?.tripRequest.vehicle?.color ?? ''}'),
-                      // Text('Cédula Verde: ${reserveDetail?.tripRequest.vehicle?.nroGreenCard ?? ''}'),
+                      Text('Patente ${reserveDetail.tripRequest.vehicle?.patent ?? ''}'),
+                      Text('Color ${reserveDetail.tripRequest.vehicle?.color ?? ''}'),
+                      Row(
+                        children: [
+                          Text(
+                            'Seguro ${reserveDetail.tripRequest.vehicle?.insuranceType ?? ''}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF276EF1)
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.verified_user_outlined, 
+                            color: Color(0xFF276EF1)
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -365,14 +366,14 @@ class ReserveDetailContent extends StatelessWidget {
                 color: Color(0xFF3b82f6),
               ),
               title: Text(
-                reserveDetail != null ? reserveDetail!.tripRequest.pickupNeighborhood : '',
+                reserveDetail.tripRequest.pickupNeighborhood,
               ),
               titleTextStyle: const TextStyle(
                 fontSize: 14,
                 color: Colors.black
               ),
               subtitle: Text(
-                reserveDetail != null ? reserveDetail!.tripRequest.pickupText : '',
+                reserveDetail.tripRequest.pickupText,
               ),
             ),
             ListTile(
@@ -381,17 +382,61 @@ class ReserveDetailContent extends StatelessWidget {
                 color: Color(0xFFdc2627),
               ),
               title: Text(
-                reserveDetail != null ? reserveDetail!.tripRequest.destinationNeighborhood : ''
+                reserveDetail.tripRequest.destinationNeighborhood,
               ),
               titleTextStyle: const TextStyle(
                 fontSize: 14,
                 color: Colors.black
               ),
               subtitle: Text(
-                reserveDetail != null ? reserveDetail!.tripRequest.destinationText : ''
+                reserveDetail.tripRequest.destinationText,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPayment(BuildContext context) {
+    return  Container(
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 238, 238, 238),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: ListTile(
+        title: const Text(
+          'Pago',
+          style: TextStyle(fontSize: 15),
+        ),
+        subtitle: Text(
+          reserveDetail.payment?.paymentMethod ?? '',
+          style: const TextStyle(fontSize: 13),
+        ),
+        leading: const Icon(
+          Icons.payments,
+          color: Color(0xFF00A98F),
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: reserveDetail.isPaid 
+              ? const Color.fromARGB(41, 0, 169, 144) 
+              : const Color.fromARGB(34, 206, 79, 0),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            reserveDetail.isPaid ? 'Pagado' : 'Pendiente',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: reserveDetail.isPaid
+                ? const Color.fromARGB(255, 0, 145, 123)
+                : const Color.fromARGB(255, 250, 96, 0),
+            ),
+          ),
         ),
       ),
     );

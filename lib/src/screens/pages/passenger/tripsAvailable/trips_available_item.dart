@@ -43,7 +43,8 @@ class TripsAvailableItem extends StatelessWidget {
           'destinationText': passengerRequest!.destinationText,
           'departureTime': passengerRequest!.departureTime,
           'compensation': passengerRequest!.compensation,
-          'driver': passengerRequest!.driver
+          'driver': passengerRequest!.driver,
+          'vehicle': passengerRequest!.vehicle
         });
 
       },

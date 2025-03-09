@@ -32,12 +32,6 @@ class AuthRepositoryImpl implements AuthRepository {
     return authService.register(user);
   }
 
-  // implementation user register
-  @override
-  Future<Resource<User>> changeRol(String idRole) {
-    return authService.changeRol(idRole);
-  }
-
   // implementation logout
   @override
   Future<bool> logout() async {
@@ -62,6 +56,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthResponse?> getUserSession() async {
     final data = await sharedPref.read('user');
+
     if (data != null) {
       // We interpret the data that comes in JSON format
       AuthResponse authResponse = AuthResponse.fromJson(data);
@@ -81,6 +76,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Map<String, String>?> getUserToken() async {
     final dataToken = await sharedPref.readToken();
+    // print('GetUserToken Local--------------------------');
     // print(dataToken);
     // print(dataToken[0]);
     // print(dataToken[1]);

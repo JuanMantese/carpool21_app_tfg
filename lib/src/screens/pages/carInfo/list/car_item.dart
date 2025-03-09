@@ -17,11 +17,6 @@ class CarItem extends StatelessWidget {
     print('Car Info Item: ${car.toJson()}');
     return GestureDetector(
       onTap: () {
-        // Navigator.pushNamed(context, '/car/info', arguments: {
-        //   'idVehicle': car.idVehicle,
-        //   'originPage': '/car/list',
-        // });
-
         context.push('/car/list/info', extra: {
           'idVehicle': car.idVehicle,
           'originPage': '/car/list',
@@ -34,6 +29,7 @@ class CarItem extends StatelessWidget {
         ),
         elevation: 5,
         color: const Color(0xFFF9F9F9),
+        surfaceTintColor: const Color(0xFFF9F9F9),
         child: Stack(
           children: [
             Padding(
@@ -59,7 +55,24 @@ class CarItem extends StatelessWidget {
                         Text('Modelo: ${car.model}'),
                         Text('Año: ${car.year}'),
                         Text('Color: ${car.color}'),
-                        // Text('Cédula Verde: ${car.nroGreenCard ?? ''}'),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              'Seguro ${car.insuranceType ?? ''}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF276EF1)
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(
+                              Icons.verified_user_outlined, 
+                              color: Color(0xFF276EF1)
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -72,7 +85,6 @@ class CarItem extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.edit, color: Colors.teal),
                 onPressed: () {
-                  // Navigator.pushNamed(context, '/car/update', arguments: car);
                   context.push('/car/list/update', extra: car);
                 },
               ),
@@ -86,7 +98,7 @@ class CarItem extends StatelessWidget {
   Widget _carImageWithPatent() {
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 100,
           width: 150,
           child: Image.asset(

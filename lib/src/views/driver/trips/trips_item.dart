@@ -4,28 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-// ignore: must_be_immutable
 class TripsItem extends StatelessWidget {
   
-  TripDetail? reserveDetail;
-  String tripType;
+  final TripDetail? tripDetail;
+  final String tripType;
 
-  TripsItem(this.reserveDetail, this.tripType, {super.key});
+  const TripsItem(
+    this.tripDetail, 
+    this.tripType, 
+    {super.key}
+  );
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        int? idDriverRequest = reserveDetail?.idTrip;
-        // Navigator.pushNamed(context, '/driver/trip/detail', 
-        //   arguments:{
-        //     'idDriverRequest':  idDriverRequest,
-        //   }
-        // );
+        int? idTrip = tripDetail?.idTrip;
 
-        context.push('/driver/0/trip/detail', extra: {
-          'idDriverRequest':  idDriverRequest,
-        });
+        // Si el viaje esta INCOURSE, se lleva al screen MapTripDriver
+        if (tripDetail?.state == 3) {
+          context.push('/driver/0/mapTripDriver', extra: {
+            'idTrip': idTrip
+          });
+        } else {
+          context.push('/driver/0/trip/detail', extra: {
+            'idDriverRequest': idTrip,
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -55,13 +60,13 @@ class TripsItem extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.my_location, color: Colors.white),
                       title: Text(
-                        reserveDetail!.pickupNeighborhood,
+                        tripDetail!.pickupNeighborhood,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(reserveDetail!.pickupText,
+                      subtitle: Text(tripDetail!.pickupText,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500
@@ -71,13 +76,13 @@ class TripsItem extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.location_on, color: Colors.white),
                       title: Text(
-                        reserveDetail!.destinationNeighborhood,
+                        tripDetail!.destinationNeighborhood,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(reserveDetail!.destinationText,
+                      subtitle: Text(tripDetail!.destinationText,
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500
@@ -101,11 +106,11 @@ class TripsItem extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const SizedBox(height: 10),
-                    _startTripHour(reserveDetail!.departureTime),
+                    _startTripHour(tripDetail!.departureTime),
                     const SizedBox(height: 10),
                     
-                    if (tripType != 'historicalTrips') 
-                      _chatButton(),
+                    // if (tripType != 'historicalTrips') 
+                    //   _chatButton(),
 
                     const SizedBox(height: 6),
                     
@@ -280,6 +285,6 @@ class TripsItem extends StatelessWidget {
         ),
       ),
     );
-    
   }
+
 }

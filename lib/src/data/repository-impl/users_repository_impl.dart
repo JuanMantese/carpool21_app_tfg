@@ -24,4 +24,11 @@ class UsersRepositoryImpl extends UsersRepository {
   Future<Resource<User>> getUserDetail() {
     return usersService.getUserDetail();
   }
+
+  // implementation changeRol
+  @override
+  Future<Resource<User>> changeRol(String idRole) {
+    return usersService.changeRol(idRole);
+  }
+
 }

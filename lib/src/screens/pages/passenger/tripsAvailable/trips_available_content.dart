@@ -2,7 +2,7 @@ import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_event.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_state.dart';
-import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/floating_message.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_message.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/trips_available_item.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
 import 'package:carpool_21_app/src/screens/widgets/search_bar.dart';

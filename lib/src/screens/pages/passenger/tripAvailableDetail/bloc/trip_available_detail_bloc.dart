@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/models/card_request.dart';
 import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
 import 'package:carpool_21_app/src/domain/models/reserve_request.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
@@ -35,7 +36,7 @@ class TripAvailableDetailBloc extends Bloc<TripAvailableDetailEvent, TripAvailab
     this.driverTripRequestsUseCases, 
     this.reserveUseCases,
     this.socketIOBloc
-  ): super(const TripAvailableDetailState(
+  ): super(TripAvailableDetailState(
     responseReserve: null
   )) {
 
@@ -60,8 +61,9 @@ class TripAvailableDetailBloc extends Bloc<TripAvailableDetailEvent, TripAvailab
           destinationLatLng: event.destinationLatLng,
           departureTime: event.departureTime,
           compensation: event.compensation,
-          driver: event.driver,
           controller: initializeController,
+          driver: event.driver,
+          vehicle: event.vehicle,
         )
       );
 
@@ -165,10 +167,31 @@ class TripAvailableDetailBloc extends Bloc<TripAvailableDetailEvent, TripAvailab
     //   );
     // });
 
+    on<SelectPaymentMethod>((event, emit) async {
+      print('SelectPaymentMethod');
+      print(event.paymentSelected);
+      emit(
+        state.copyWith(
+          paymentMethodSelected: event.paymentSelected
+        )
+      );
+    });
+
     on<CreateReserve>((event, emit) async {
+      print(event.paymentMethod);
+      print(event.cardNumber);
+      print(event.cardHolder);
+      print(event.expiryDate);
+      print(event.cvv);
+
       ReserveRequest reserveRequest = ReserveRequest(
         tripRequestId: event.tripRequestId, 
-        isPaid: true
+        paymentMethod: event.paymentMethod.key,
+        saveNewCard: event.saveNewCard,
+        cardNumber: event.cardNumber,
+        ownerName: event.cardHolder,
+        expirationDate: event.expiryDate?.isNotEmpty == true ? CardRequest.rotateExpirationDate(event.expiryDate!) : null,
+        cvv: event.cvv != null && event.cvv!.isNotEmpty ? int.tryParse(event.cvv!) : null,
       );
 
       emit(
@@ -200,7 +223,9 @@ class TripAvailableDetailBloc extends Bloc<TripAvailableDetailEvent, TripAvailab
         if(socketIOBloc.state.socket != null) {
           print('Emitiendo');
           socketIOBloc.state.socket?.emit('new_reserve_trip', {
-            'id_passenger_request': authResponse.user?.idUser
+            "id_passenger": authResponse.user?.idUser,
+            "id_trip": event.idTrip,
+            'id_passenger_request': event.idReserve
           });
         }
       } else {
@@ -211,7 +236,7 @@ class TripAvailableDetailBloc extends Bloc<TripAvailableDetailEvent, TripAvailab
     // Reseteo los valores del State al ejecutar una reserva con Exito
     on<ResetState>((event, emit) {
       print('reseteo');
-      emit(const TripAvailableDetailState()); // Emitimos el estado inicial limpio.
+      emit(TripAvailableDetailState()); // Emitimos el estado inicial limpio.
     });
   }
 

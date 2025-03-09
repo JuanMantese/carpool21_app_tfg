@@ -1,9 +1,13 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_state.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/trip_detail_reserves_item.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_message.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -21,8 +25,6 @@ class TripDetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('TripDetailContent');
-
     return Stack(
       children: [
         Padding(
@@ -33,7 +35,6 @@ class TripDetailContent extends StatelessWidget {
             left: 26
           ),
           child: ListView(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTripCard(context),
               const SizedBox(height: 16),
@@ -47,7 +48,6 @@ class TripDetailContent extends StatelessWidget {
               const SizedBox(height: 16),            
               // const Spacer(),
               _buttonsAction(context)
-              
             ],
           ),
         ),
@@ -56,52 +56,19 @@ class TripDetailContent extends StatelessWidget {
         CustomIconBack(
           margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
           onPressed: () {
-            // Navigator.pushNamedAndRemoveUntil(context, '/driver/home', (Route<dynamic> route) => false,);
             context.go('/driver/0');
           },
         ),
+
+        if (state.showNewReservesOnTrip)
+          FloatingMessage(
+            displayDuration: const Duration(seconds: 5),
+            onUpdate: () {
+              context.read<TripDetailBloc>().add(GetTripDetail(idTrip: tripDetail!.idTrip));
+            },
+          ),
       ],
     );
-
-    // return Stack(
-    //   children: [
-    //     Padding(
-    //       padding: EdgeInsets.only(
-    //         top: MediaQuery.of(context).padding.top + 26,
-    //         right: 26,
-    //         left: 26,
-    //       ),
-    //       child: Column(
-    //         children: [
-    //           Expanded(
-    //             child: ListView(
-    //               children: [
-    //                 _buildTripCard(context),
-    //                 const SizedBox(height: 16),
-    //                 _buildTripInfoMap(context),
-    //                 const SizedBox(height: 16),
-    //                 _buildObservationsSection(context),
-    //                 const SizedBox(height: 16),
-    //                 _buildVehicleInfo(context),
-    //                 const SizedBox(height: 16),
-    //                 _buildReservesList(context),
-    //               ],
-    //             ),
-    //           ),
-    //           const SizedBox(height: 16), // Espaciador fijo
-    //           _buttonsAction(context), // Botones que quedan siempre visibles
-    //         ],
-    //       ),
-    //     ),
-    //     _headerTripDetail(context),
-    //     CustomIconBack(
-    //       margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
-    //       onPressed: () {
-    //         context.go('/driver/0');
-    //       },
-    //     ),
-    //   ],
-    // );
   }
 
   Widget _headerTripDetail(BuildContext context) {
@@ -209,7 +176,6 @@ class TripDetailContent extends StatelessWidget {
                 ListTile(
                   leading: const Icon(
                     Icons.timer,
-                    // color: Color(0xFF3b82f6),
                   ),
                   title: Text(
                     tripDetail != null ? formattedTime : '',
@@ -222,7 +188,6 @@ class TripDetailContent extends StatelessWidget {
                 ListTile(
                   leading: const Icon(
                     Icons.person_rounded,
-                    // color: Color(0xFF3b82f6),
                   ),
                   title: Text(
                     tripDetail != null ? tripDetail!.availableSeats.toString() : '',
@@ -232,19 +197,18 @@ class TripDetailContent extends StatelessWidget {
                     color: Colors.black
                   ),
                 ),
-                // ListTile(
-                //   leading: const Icon(
-                //     Icons.attach_money_rounded,
-                //     // color: Color(0xFFdc2627),
-                //   ),
-                //   title: Text(
-                //     tripDetail != null ? tripDetail!.compensation.toString() : ''
-                //   ),
-                //   titleTextStyle: const TextStyle(
-                //     fontSize: 14,
-                //     color: Colors.black
-                //   ),
-                // ),
+                ListTile(
+                  leading: const Icon(
+                    Icons.attach_money_rounded,
+                  ),
+                  title: Text(
+                    tripDetail!.compensation.toString()
+                  ),
+                  titleTextStyle: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black
+                  ),
+                ),
             
               ],
             ),
@@ -260,7 +224,7 @@ class TripDetailContent extends StatelessWidget {
                     color: Colors.black.withOpacity(0.2),
                     spreadRadius: 2, // Expansión de la sombra
                     blurRadius: 6, // Desenfoque de la sombra
-                    offset: Offset(0, 3), // Desplazamiento de la sombra
+                    offset: const Offset(0, 3), // Desplazamiento de la sombra
                   ),
                 ],
               ),
@@ -379,17 +343,32 @@ class TripDetailContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        tripDetail?.vehicle?.brand ?? '',
+                        '${tripDetail?.vehicle?.brand ?? ''} ${tripDetail?.vehicle?.model ?? ''}',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text('Patente: ${tripDetail?.vehicle?.patent ?? ''}'),
-                      Text('Año: ${tripDetail?.vehicle?.year ?? ''}'),
-                      Text('Color: ${tripDetail?.vehicle?.color ?? ''}'),
-                      // Text('Cédula Verde: ${tripDetail?.vehicle?.nroGreenCard ?? ''}'),
+                      Text('Patente ${tripDetail?.vehicle?.patent ?? ''}'),
+                      Text('Color ${tripDetail?.vehicle?.color ?? ''}'),
+                      Row(
+                        children: [
+                          Text(
+                            'Seguro ${tripDetail?.vehicle?.insuranceType ?? ''}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF276EF1)
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.verified_user_outlined, 
+                            color: Color(0xFF276EF1)
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -419,7 +398,7 @@ class TripDetailContent extends StatelessWidget {
           const SizedBox(height: 10),
           ...tripDetail!.reservations!.map((reserve) {
             return TripDetailReservesItem(reserveDetail: reserve);
-          }).toList(),
+          }),
         ],
       )
       : 
@@ -476,7 +455,9 @@ class TripDetailContent extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(width: 16),
+              
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {},
@@ -517,10 +498,13 @@ class TripDetailContent extends StatelessWidget {
               ),
             ]
           ),
-          Container(
+
+          SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: null,
+              onPressed: () {
+                context.read<TripDetailBloc>().add(ChangeTripStatus(idTrip: tripDetail!.idTrip));
+              },
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.only(
                   top: 10,
@@ -537,22 +521,16 @@ class TripDetailContent extends StatelessWidget {
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
-                disabledBackgroundColor: Color.fromARGB(170, 217, 198, 198),
-                disabledForegroundColor: Color.fromARGB(255, 108, 100, 100),
+                disabledBackgroundColor: const Color.fromARGB(170, 217, 198, 198),
+                disabledForegroundColor: const Color.fromARGB(255, 108, 100, 100),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Icon(
-                  //   Icons.close_rounded,
-                  //   color: Color.fromRGBO(0, 117, 255, 0.66),
-                  // ),
-                  // SizedBox(width: 16),
                   Text(
                     'Iniciar Viaje',
                     style: TextStyle(
                       // color: Colors.black,
-                        // Color.fromRGBO(0, 163, 255, 0.43), // Top color
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),

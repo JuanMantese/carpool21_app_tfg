@@ -2,6 +2,7 @@ import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/injection.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/car-info/car_info_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/cards/cards_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driver_trip_request_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/drivers-position/drivers_position_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/geolocation/geolocation_use_cases.dart';
@@ -16,10 +17,14 @@ import 'package:carpool_21_app/src/screens/pages/carInfo/info/bloc/car_info_bloc
 import 'package:carpool_21_app/src/screens/pages/carInfo/list/bloc/car_list_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_register_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/update/bloc/car_update_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/card/register/bloc/card_register_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/createTrip/bloc/create_trip_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/home/bloc/driver_home_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapLocation/bloc/driver_map_location_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/passenger/mapTripPassenger/bloc/map_trip_passenger_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/payments/bloc/payment_method_bloc.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_bloc.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_event.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/bloc/error_bloc.dart';
@@ -91,6 +96,13 @@ List<BlocProvider> blocProviders = [
     locator<SocketUseCases>(), 
     context.read<SocketIOBloc>()
   )..add(GetReservesAll())),
+  BlocProvider<MapTripPassengerBloc>(create: (context) => MapTripPassengerBloc(
+    locator<AuthUseCases>(),
+    locator<ReserveUseCases>(),
+    locator<GeolocationUseCases>(), 
+    locator<DriverTripRequestsUseCases>(),
+    context.read<SocketIOBloc>()
+  )),
 
   // Driver Screens
   BlocProvider<DriverHomeBloc>(create: (context) => DriverHomeBloc(
@@ -115,7 +127,9 @@ List<BlocProvider> blocProviders = [
   )),
   BlocProvider<TripDetailBloc>(create: (context) => TripDetailBloc(
     locator<GeolocationUseCases>(), 
-    locator<DriverTripRequestsUseCases>()
+    locator<DriverTripRequestsUseCases>(),
+    locator<SocketUseCases>(),
+    context.read<SocketIOBloc>()
   )),
   BlocProvider<TripsBloc>(create: (context) => TripsBloc(
     locator<AuthUseCases>(), 
@@ -128,6 +142,11 @@ List<BlocProvider> blocProviders = [
     locator<GeolocationUseCases>(), 
     locator<DriversPositionUseCases>(), 
     locator<SocketUseCases>(), 
+    context.read<SocketIOBloc>()
+  )),
+  BlocProvider<MapTripDriverBloc>(create: (context) => MapTripDriverBloc(
+    locator<GeolocationUseCases>(), 
+    locator<DriverTripRequestsUseCases>(),
     context.read<SocketIOBloc>()
   )),
   
@@ -154,8 +173,21 @@ List<BlocProvider> blocProviders = [
     locator<CarInfoUseCases>()
   )),
 
+  // Cards Screens
+  BlocProvider<CardRegisterBloc>(create: (context) => CardRegisterBloc(
+    // locator<AuthUseCases>(), 
+    locator<CardsUseCases>(), 
+    // locator<UserUseCases>()
+  )),
+
+  // Payments Screens
+  BlocProvider<PaymentMethodBloc>(create: (context) => PaymentMethodBloc(
+    locator<AuthUseCases>(),
+    locator<CardsUseCases>(),
+  )),
+
   // Generic Providers
-  BlocProvider<NavigationBloc>(create: (context) => NavigationBloc(locator<AuthUseCases>())),
+  BlocProvider<NavigationBloc>(create: (context) => NavigationBloc(locator<AuthUseCases>(), locator<UserUseCases>())),
   BlocProvider<ErrorBloc>(create: (context) => ErrorBloc()),
 
   // Map Widget  

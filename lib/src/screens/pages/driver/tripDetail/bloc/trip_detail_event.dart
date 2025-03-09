@@ -10,6 +10,14 @@ class GetTripDetail extends TripDetailEvent {
   });
 }
 
+class ChangeTripStatus extends TripDetailEvent {
+  final int idTrip;
+
+  ChangeTripStatus({
+    required this.idTrip
+  });
+}
+
 class TripDetailInitMap extends TripDetailEvent {}
 
 class InitializeMap extends TripDetailEvent {}
@@ -30,3 +38,6 @@ class AddPolyline extends TripDetailEvent {}
 
 // Reseteo los valores del State al salir de la pantalla
 class ResetState extends TripDetailEvent {}
+
+// Socket IO
+class ListenTripReservesSocketIO extends TripDetailEvent {}

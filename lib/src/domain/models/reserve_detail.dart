@@ -1,16 +1,19 @@
+import 'package:carpool_21_app/src/domain/models/payment_detail.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 
 class ReserveDetail {
   int idReservation;
   bool isPaid;
   TripDetail tripRequest;
-  Driver driver; 
+  Driver driver;
+  PaymentDetail? payment;
 
   ReserveDetail({
     required this.idReservation,
     required this.isPaid,
     required this.tripRequest,
     required this.driver,
+    this.payment,
   });
 
   factory ReserveDetail.fromJson(Map<String, dynamic> json) => ReserveDetail(
@@ -18,6 +21,7 @@ class ReserveDetail {
     isPaid: json["isPaid"],
     tripRequest: TripDetail.fromJson(json["tripRequest"]),
     driver: Driver.fromJson(json["driver"]),
+    payment: json["payment"] != null ? PaymentDetail.fromJson(json["payment"]) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -25,37 +29,6 @@ class ReserveDetail {
     'isPaid': isPaid,
     'tripRequest': tripRequest.toJson(),
     'driver': driver.toJson(),
-  };
-}
-
-class DriverRes {
-  int idDriver;
-  String name;
-  String lastName;
-  String phone;
-  String? photo;
-
-  DriverRes({
-    required this.idDriver,
-    required this.name,
-    required this.lastName,
-    required this.phone,
-    this.photo,
-  });
-
-  factory DriverRes.fromJson(Map<String, dynamic> json) => DriverRes(
-    idDriver: json["idDriver"],
-    name: json["name"],
-    lastName: json["lastName"],
-    phone: json["phone"],
-    photo: json["photo"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "idDriver": idDriver,
-    "name": name,
-    "lastName": lastName,
-    "phone": phone,
-    "photoUser": photo,
+    if (payment != null) 'payment': payment!.toJson(),
   };
 }

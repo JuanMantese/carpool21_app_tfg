@@ -153,12 +153,10 @@ class PassengerHomeContent extends StatelessWidget {
               )),
           ElevatedButton(
             onPressed: () {
-              // Navigator.pushNamed(context, 'passenger/request/trips');
               context.go('/passenger/0/request/trips');
             },
             style: ButtonStyle(
-              backgroundColor:
-                  MaterialStateProperty.all<Color>(Colors.transparent),
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
               shadowColor: MaterialStateProperty.all<Color>(Colors.transparent),
               elevation: MaterialStateProperty.all<double>(0),
               side: MaterialStateProperty.all<BorderSide>(

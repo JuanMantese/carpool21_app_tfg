@@ -5,6 +5,7 @@ import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_regis
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_register_event.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_register_state.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/car_register_content.dart';
+import 'package:carpool_21_app/src/screens/pages/carInfo/register/car_register_insurance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -34,7 +35,6 @@ class _CarRegisterPageState extends State<CarRegisterPage> with RouteAware {
 
     // Recibiendo los argumentos del Vehiculo
     final args = widget.arguments;
-
     previousRoute = args['originPage'];
 
     // Wait until all elements of the Widget build are loaded to execute the Event
@@ -62,13 +62,6 @@ class _CarRegisterPageState extends State<CarRegisterPage> with RouteAware {
             // Actualizamos la información local del usuario
             context.read<CarRegisterBloc>().add(UpdateUserSession());
 
-            // Navigator.pushNamedAndRemoveUntil(context, '/car/info', (route) => false,
-            //   arguments: {
-            //     'idVehicle': carInfo.idVehicle,
-            //     'originPage': previousRoute
-            //   }
-            // );
-
             context.go('/car/list/info', extra: {
               'idVehicle': carInfo.idVehicle,
               'originPage': previousRoute
@@ -88,18 +81,23 @@ class _CarRegisterPageState extends State<CarRegisterPage> with RouteAware {
         child: BlocBuilder<CarRegisterBloc, CarRegisterState>(
           builder: (context, state) {
             final response = state.response;
+            final currentStep = state.currentStep;
 
             // We display the content and the Loading
-            if (response is Loading) {
-              return Stack(
-                children: [
-                  CarRegisterContent(state),
-                  const Center(child: CircularProgressIndicator())
-                ],
-              );
-            } 
-
-            return CarRegisterContent(state);
+            return Stack(
+              children: [
+                Visibility(
+                  visible: currentStep == 0,
+                  child: CarRegisterContent(state),
+                ),
+                Visibility(
+                  visible: currentStep == 1,
+                  child: CarRegisterInsurance(state),
+                ),
+                if (response is Loading)
+                  const Center(child: CircularProgressIndicator()),
+              ],
+            );
           },
         ),
       ),

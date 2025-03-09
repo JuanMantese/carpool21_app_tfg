@@ -3,6 +3,7 @@ import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
+import 'package:carpool_21_app/src/domain/useCases/users/user_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationEvent.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationState.dart';
@@ -12,9 +13,11 @@ import 'package:carpool_21_app/src/screens/utils/globals.dart' as globals;
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
   AuthUseCases authUseCases;
+  UserUseCases userUseCases;
 
   NavigationBloc(
-    this.authUseCases
+    this.authUseCases,
+    this.userUseCases
   ) : super(
     NavigationState(
       navigationType: globals.currentRole == 'passenger' 
@@ -91,21 +94,30 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     on<ChangeUserRol>((event, emit) async {
       print('Entro en ChangeUserRol - Navigation -----------------------------------------');
 
-      Success<User> userResponse = await authUseCases.changeRolUseCase.run(event.idRole);
-      var userData = userResponse.data;
-      print('Información Actualizada: ${userData.toJson()}');
-      
-      // Actualizando la información del usuario localmente
-      await authUseCases.updateUserSession.run(userData);
+      Resource userResponse = await userUseCases.changeRolUseCase.run(event.idRole);
+      if (userResponse is Success<User>) {        
+        var userData = userResponse.data;
+        print('Información Actualizada: ${userData.toJson()}');
+        
+        // Actualizando la información del usuario localmente
+        await authUseCases.updateUserSession.run(userData);
 
-      List<Role> roles = userData.roles?.map((role) => role).toList() ?? [];
+        List<Role> roles = userData.roles?.map((role) => role).toList() ?? [];
+        
+        emit(
+          state.copyWith(
+            roles: roles,
+            currentUser: userData,
+          )
+        );
+      } 
+      else if (userResponse is ErrorData) {
+        print('Ocurrio un error inesperado: ${userResponse.message}');
+        print('Ocurrio un error inesperado: ${userResponse.hashCode}');
+        print('Ocurrio un error inesperado: ${event.idRole}');
+
+      }
       
-      emit(
-        state.copyWith(
-          roles: roles,
-          currentUser: userData,
-        )
-      );
     });
   }
 }

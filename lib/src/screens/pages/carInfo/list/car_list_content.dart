@@ -18,31 +18,10 @@ class CarListContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Stack(
         children: [ 
-          // Permite listar la informacion que viene dentro de una Lista
-          Container(
-            margin: const EdgeInsets.only(top: 100, bottom: 40),
-            padding: const EdgeInsets.only(right: 20, left: 20),
-            child: ListView.builder(
-              itemCount: carResponse?.length,
-              itemBuilder: (context, index) {
-                return CarItem(
-                  car: carResponse![index]
-                );
-              },
-            ),
-          ),
-
           _headerVehicles(context),
-          CustomIconBack(
-            margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
-            onPressed: () {
-              context.pop();
-            },
-          ),
 
           // Decoration
           const Positioned(
@@ -64,6 +43,27 @@ class CarListContent extends StatelessWidget {
             top: 76,
             right: 56,
             child: Icon(Icons.add_rounded, color: Colors.teal),
+          ),
+
+          // Permite listar la informacion que viene dentro de una Lista
+          Container(
+            margin: const EdgeInsets.only(top: 100, bottom: 40),
+            padding: const EdgeInsets.only(right: 20, left: 20),
+            child: ListView.builder(
+              itemCount: carResponse?.length,
+              itemBuilder: (context, index) {
+                return CarItem(
+                  car: carResponse![index]
+                );
+              },
+            ),
+          ),
+
+          CustomIconBack(
+            margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
+            onPressed: () {
+              context.pop();
+            },
           ),
         ],
       ),
@@ -95,8 +95,8 @@ class CarListContent extends StatelessWidget {
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 30),
       height: MediaQuery.of(context).size.height * 0.16,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
           colors: [
             Color.fromARGB(255, 0, 64, 52), // Top color
             Color(0xFF00A48B), // Bottom color
@@ -104,10 +104,24 @@ class CarListContent extends StatelessWidget {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF006D59).withOpacity(0.3), // Verde oscuro más pronunciado
+            blurRadius: 30, // Más difuminado
+            spreadRadius: 2,
+            offset: const Offset(0, 12), // Más desplazado hacia abajo
+          ),
+          BoxShadow(
+            color: const Color(0xFF00A48B).withOpacity(0.2), // Verde claro para suavizar
+            blurRadius: 40,
+            spreadRadius: 2,
+            offset: const Offset(0, 15), // Más disperso
+          ),
+        ],
       ),
       child: const Text(
         'MIS VEHÍCULOS',

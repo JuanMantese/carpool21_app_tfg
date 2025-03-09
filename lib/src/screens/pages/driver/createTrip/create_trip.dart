@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 import 'dart:ui';
-
 import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/domain/models/time_and_distance_value.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';

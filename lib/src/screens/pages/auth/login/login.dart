@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             context.read<LoginBloc>().add(SaveUserSession(authResponse: authResponse));
 
             // Conectando a Socket IO
-            context.read<SocketIOBloc>().add(ConnectSocketIO());
+            context.read<SocketIOBloc>().add(ConnectSocketIO(idUser: authResponse.user!.idUser.toString()));
 
             if (authResponse.user!.roles!.length > 1) {
               // Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false);

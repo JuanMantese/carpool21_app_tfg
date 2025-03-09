@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class TripDetailState extends Equatable {
 
   final Resource? responseGetTripDetail;
+  final Resource? responseStartTrip;
+  final bool showNewReservesOnTrip;
   
   final Completer<GoogleMapController>? controller;
   final LatLng? pickUpLatLng;
@@ -19,6 +21,8 @@ class TripDetailState extends Equatable {
 
   const TripDetailState({
     this.responseGetTripDetail,
+    this.responseStartTrip,
+    this.showNewReservesOnTrip = false,
     this.controller,
     this.pickUpLatLng,
     this.destinationLatLng,
@@ -31,6 +35,8 @@ class TripDetailState extends Equatable {
 
   TripDetailState copyWith({
     Resource? responseGetTripDetail,
+    Resource? responseStartTrip,
+    bool? showNewReservesOnTrip,
 
     Completer<GoogleMapController>? controller,
     LatLng? pickUpLatLng,
@@ -43,6 +49,8 @@ class TripDetailState extends Equatable {
   }) {
     return TripDetailState(
       responseGetTripDetail: responseGetTripDetail ?? this.responseGetTripDetail,
+      responseStartTrip: responseStartTrip ?? this.responseStartTrip,
+      showNewReservesOnTrip: showNewReservesOnTrip ?? this.showNewReservesOnTrip,
       controller: controller ?? this.controller,
       pickUpLatLng: pickUpLatLng ?? this.pickUpLatLng,
       destinationLatLng: destinationLatLng ?? this.destinationLatLng,
@@ -57,6 +65,8 @@ class TripDetailState extends Equatable {
   @override
   List<Object?> get props => [
     responseGetTripDetail,
+    responseStartTrip,
+    showNewReservesOnTrip,
     controller,
     pickUpLatLng,
     destinationLatLng,
