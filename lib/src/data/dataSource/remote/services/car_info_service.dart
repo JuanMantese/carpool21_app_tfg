@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/src/data/dataSource/remote/service_handler.dart';
 import 'package:carpool_21_app/src/domain/models/car_info.dart';
+import 'package:carpool_21_app/src/domain/utils/list_to_string.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/error_utils.dart';
 import 'package:dio/dio.dart';
@@ -32,6 +33,9 @@ class CarInfoService {
 
         return Success(carInfoResponse);
       } else {
+        if (response.data['message'] is List) {
+          return ErrorData(listToString(response.data['message']));
+        }
         return ErrorData(response.data['message']);
       }
     } catch (e) {

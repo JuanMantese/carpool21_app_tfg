@@ -53,8 +53,16 @@ class _RegisterCardDialogState extends State<RegisterCardDialog> {
           print("Error al registrar la tarjeta: ${error.message}");
 
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            showOverlayMessage(context, error.message);
+            showOverlayMessage(
+              context, 
+              error.message,
+              customTitle: 'Error al registrar la tarjeta',
+              type: AlertType.error
+            );
           });
+
+          // Reseteando el createdCardRes
+          context.read<CardRegisterBloc>().add(ResetCreatedCardRes());
         }
 
         return Dialog(
@@ -119,6 +127,9 @@ class _RegisterCardDialogState extends State<RegisterCardDialog> {
                       CustomTextField(
                         onChanged: (text) {
                           context.read<CardRegisterBloc>().add(CardHolderChanged(cardHolderInput: BlocFormItem(value: text)));
+                        },
+                        validator: (value) {
+                          return state.cardHolder.error;
                         },
                         text: 'Nombre del Titular',
                         initialValue: state.cardHolder.value,
@@ -204,9 +215,9 @@ class _RegisterCardDialogState extends State<RegisterCardDialog> {
                                 borderRadius: BorderRadius.all(Radius.circular(10)),
                               ),
                             ),
-                            child: const Text(
-                              'Pagar y Reservar',
-                              style: TextStyle(
+                            child: Text(
+                              widget.onReserveSeat ? 'Pagar y Reservar' : 'Registrar',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
@@ -216,6 +227,7 @@ class _RegisterCardDialogState extends State<RegisterCardDialog> {
                           const SizedBox(width: 20),
                           OutlinedButton(
                             onPressed: () {
+                              context.read<CardRegisterBloc>().add(ResetState());
                               Navigator.of(context).pop();
                             },
                             style: OutlinedButton.styleFrom(

@@ -97,7 +97,6 @@ class _CustomMonthYearInputState extends State<CustomMonthYearInput> {
                         onSelectedItemChanged: (index) {
                           setState(() {
                             selectedMonth = index + 1; // Mes basado en índice
-                            _controller.text = DateFormat('MM/yyyy').format(DateTime(selectedYear!, selectedMonth!));
                           });
                         },
                         children: List.generate(months.length, (index) {

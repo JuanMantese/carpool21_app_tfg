@@ -5,6 +5,7 @@ import 'package:carpool_21_app/src/screens/pages/driver/mapSeeker/bloc/driver_ma
 import 'package:carpool_21_app/src/screens/widgets/custom_button.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_time_picker.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:carpool_21_app/src/screens/widgets/google_places_auto_complete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -30,7 +31,6 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
     super.initState();
 
     // Inicializo la hora de partida al momento actual
-    // Ejecutar la acción del BLoC para actualizar la hora de partida
     context.read<DriverMapFinderBloc>().add(UpdateDepartureTime(time: getCurrentIso8601Time()));
 
     // Añadir listeners a los TextEditingControllers - Escuchamos los cambios
@@ -76,14 +76,6 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
     }
   }
 
-  // Validamos si los campos estan completados para que el boton funcione
-  bool _isButtonEnabled(DriverMapFinderState state) {
-    return state.pickUpLatLng != null &&
-           state.pickUpText.isNotEmpty &&
-           state.destinationLatLng != null &&
-           state.destinationText.isNotEmpty;
-  }
-
   String getCurrentIso8601Time() {
     DateTime now = DateTime.now();
     DateTime utcNow = DateTime.utc(
@@ -98,6 +90,15 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
     return utcNow.toIso8601String();
   }
 
+  // Validamos si los campos estan completados para que el boton funcione
+  bool _isButtonEnabled(DriverMapFinderState state) {
+    return state.pickUpText.isNotEmpty &&
+           state.pickUpLatLng != null &&
+           state.destinationText.isNotEmpty &&
+           state.destinationLatLng != null &&
+           state.departureTime != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -109,42 +110,21 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
       child: Scaffold(
       body: BlocBuilder<DriverMapFinderBloc, DriverMapFinderState>(
         builder: (context, state) {
+          // Verifica si el Controller del Map se inicializo completamente antes de entrar
+          if (state.controller == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return Stack(
             children: [
               GoogleMap(
-                // Mapa de Google
                 mapType: MapType.normal,
                 initialCameraPosition: state.cameraPosition, // Posicion inicial del mapa
                 markers: Set<Marker>.of(state.markers.values), // Marcadores
                 polylines: Set<Polyline>.of(state.polylines.values), // Ruta en el mapa
                 myLocationEnabled: false, // Icono de ubicacion predeterminado
                 myLocationButtonEnabled: false, // Boton de accion para ir a la posicion del usuario
-
-                // DELETE - ELIMINAR Funcion que no se va a utilizar
-                // onCameraMove: (CameraPosition cameraPosition) {
-                //   // Ejecutamos el evento de onCameraMove para obtener la ubicacion que el usuario esta elijiendo en el mapa
-                //   context.read<DriverMapFinderBloc>().add(OnCameraMove(cameraPosition: cameraPosition));
-                // },
-                // onCameraIdle: () async {
-                //   // Estableciendo direccion en el input referenciado al lugar que apunta el marker
-                //   context.read<DriverMapFinderBloc>().add(OnCameraIdle());
-                //   pickUpController.text = state.placemarkData?.address ?? '' ;
-
-                //   // Seteando valores para enviar la informacion del Origen a otra pantalla
-                //   if (state.placemarkData != null) {
-                //     context.read<DriverMapFinderBloc>().add(
-                //       OnAutoCompletedPickUpSelected(
-                //         lat: state.placemarkData!.lat,
-                //         lng: state.placemarkData!.lng,
-                //         pickUpText: state.placemarkData!.address,
-                //       )
-                //     );
-                //   }
-                // },
-                // DELETE - ELIMINAR Funcion que no se va a utilizar
-
                 onMapCreated: (GoogleMapController controller) {
-                  // controller.setMapStyle('JSON');
                   if (state.controller != null) {
                     if (!state.controller!.isCompleted) {
                       state.controller?.complete(controller);
@@ -152,12 +132,12 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                   }
                 },
               ),
+
               CustomIconBack(
                 color: Colors.black,
                 margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 180, left: 30),
                 onPressed: () {
                   context.read<DriverMapFinderBloc>().add(DriverMapFinderResetEvent());
-                  // Navigator.pop(context);
                   context.pop();
                 }, 
               ),
@@ -169,10 +149,6 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                 ),
               ),
 
-              // DELETE - ELIMINAR puntero al medio del mapa
-              // _iconMyLocation(),
-              // DELETE -
-
               // Boton de ubicacion del usuario en el mapa
               Positioned(
                 right: 20,
@@ -181,6 +157,7 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                   onPressed: () {
                     context.read<DriverMapFinderBloc>().add(FindPosition());
                   },
+                  backgroundColor: Colors.white,
                   child: const Icon(Icons.my_location),
                 ),
               ),
@@ -194,8 +171,37 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                 ),
                 child: CustomButton(
                   text: 'Continuar',
+                  isEnabled: _isButtonEnabled(state),
                   onPressed: () {
-                    if (_isButtonEnabled(state)) {
+                    // Convertir departureTime a DateTime
+                    DateTime departureDateTime = DateTime.parse(state.departureTime!);
+                    DateTime now = DateTime.now();
+
+                    if (departureDateTime.isBefore(now)) {
+                      showOverlayMessage(
+                        context, 
+                        'Por favor, selecciona un horario de partida que sea posterior al actual.',
+                        customTitle: 'Horario invalido',
+                        type: AlertType.warning
+                      );
+                    }
+                    else if (_isButtonEnabled(state)) {
+                      // Si la fecha elegida es del día siguiente, mostrar advertencia
+                      DateTime tomorrow = now.add(const Duration(days: 1));
+                      bool isNextDay = departureDateTime.year == tomorrow.year &&
+                                      departureDateTime.month == tomorrow.month &&
+                                      departureDateTime.day == tomorrow.day;
+
+                      if (isNextDay) {
+                        showOverlayMessage(
+                          context, 
+                          'Estás eligiendo un horario para el día de mañana.',
+                          customTitle: 'Horario del viaje',
+                          type: AlertType.warning
+                        );
+                      }
+
+                      // TODO: ELIMINAR - Forma anterior de realizar la navegacion pasando argumentos
                       // Navigator.pushNamed(context, '/driver/map/booking', arguments: {
                       //   'pickUpNeighborhood': state.pickUpNeighborhood,
                       //   'pickUpText': state.pickUpText,
@@ -206,6 +212,7 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                       //   'departureTime': state.departureTime,
                       // });
 
+                      // Redireccionando al paso siguiente
                       context.push('/driver/0/map/booking', extra: {
                         'pickUpNeighborhood': state.pickUpNeighborhood,
                         'pickUpText': state.pickUpText,
@@ -230,6 +237,7 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
   // Seccion de inputs para definir Origen y Destino
   Widget _googlePlacesAutocomplete() {
     return Card(
+      elevation: 2,
       margin: const EdgeInsets.only(right: 18, left: 18),
       surfaceTintColor: Colors.white,
       child: Column(
@@ -240,6 +248,10 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                 pickUpController,
                 state.pickUpText.isNotEmpty ? state.pickUpText : 'Luagar de origen',
                 (Prediction prediction) {
+                  print('PickUp Controller >>>>>>>>>>: ${state.pickUpLatLng}');
+                  print('Lugar de Origen Lat: ${prediction.lat}');
+                  print('Lugar de Origen Lat: ${prediction.lng}');
+
                   // Moviendo la camara a la posicion que ingreso el usuario en el input y agregando el marker a esa posicion
                   context.read<DriverMapFinderBloc>().add(
                     ChangeMapCameraPosition(
@@ -249,23 +261,22 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                   );
 
                   // Seteando valores para enviar la informacion del Origen a otra pantalla
-                  context
-                    .read<DriverMapFinderBloc>()
-                    .add(OnAutoCompletedPickUpSelected(
+                  context.read<DriverMapFinderBloc>().add(
+                    OnAutoCompletedPickUpSelected(
                       lat: double.parse(prediction.lat!),
                       lng: double.parse(prediction.lng!),
                       pickUpText: prediction.description ?? '',
-                    ));
-
-                  print('Lugar de Origen Lat: ${prediction.lat}');
-                  print('Lugar de Origen Lat: ${prediction.lng}');
+                    )
+                  );
                 },
-                enabled: state.pickUpLatLng != null && state.isLocationSelected,
+                enabled: state.pickUpLatLng != null && state.isLocationSelected
               );
             },
           ),
-          const SizedBox(
+          Container(
             height: 15,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: const Divider()
           ),
           BlocBuilder<DriverMapFinderBloc, DriverMapFinderState>(
             builder: (context, state) {
@@ -273,48 +284,34 @@ class _DriverMapFinderState extends State<DriverMapFinder> with WidgetsBindingOb
                 destinationController,
                 state.destinationText.isNotEmpty ? state.destinationText : 'Luagar destino',
                 (Prediction prediction) {
+                  print('Destination Controller >>>>>>>>>>: ${state.destinationLatLng}');
+                  print('Lugar de Destino Lat: ${prediction.lat}');
+                  print('Lugar de Destino Lat: ${prediction.lng}');
+
                   // Seteando valores para enviar la informacion del Destino a otra pantalla
-                  context
-                    .read<DriverMapFinderBloc>()
-                    .add(OnAutoCompletedDestinationSelected(
+                  context.read<DriverMapFinderBloc>().add(
+                    OnAutoCompletedDestinationSelected(
                       lat: double.parse(prediction.lat!),
                       lng: double.parse(prediction.lng!),
                       destinationText: prediction.description ?? '',
-                    ));
-
-                  print('Lugar de Destino Lat: ${prediction.lat}');
-                  print('Lugar de Destino Lat: ${prediction.lng}');
+                    )
+                  );
                 },
                 enabled: state.destinationLatLng != null && state.isLocationSelected,
               );
             },
           ),
-          const SizedBox(
-            height: 15
-          ),
+
+          const SizedBox(height: 15),
+
           CustomTimePicker(
             labelText: 'Hora de partida',
             onTimeChanged: (value) {
-              context
-                .read<DriverMapFinderBloc>()
-                .add(UpdateDepartureTime(time: value));
+              context.read<DriverMapFinderBloc>().add(UpdateDepartureTime(time: value));
             },
           ),
         ],
       ),
     );
   }
-
-  // DELETE - ELIMINAR armado del icono en medio de la pantalla
-  // Widget _iconMyLocation() {
-  //   return Container(
-  //     margin: const EdgeInsets.only(bottom: 25),
-  //     alignment: Alignment.center,
-  //     child: Image.asset(
-  //       'lib/assets/img/map-marker-green.png',
-  //       width: 50,
-  //       height: 50,
-  //     ),
-  //   );
-  // }
 }

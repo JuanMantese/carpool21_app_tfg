@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/src/domain/models/auth_response.dart';
+import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
 import 'package:carpool_21_app/src/domain/models/reserves_all.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/reserves/reserve_use_cases.dart';
@@ -56,6 +57,29 @@ class ReservesBloc extends Bloc<ReservesEvent, ReservesState> {
           )
         );
       }
+    }); 
+
+
+    on<CancelReservation>((event, emit) async {
+      print('CancelReservation ---------------------');
+      print('ID de la reserva a cancelar: ${event.idReserve}');
+
+      emit(
+        state.copyWith(
+          cancelationReserveRes: Loading(),
+        )
+      );
+
+      // Cancelando la reserva según su ID
+      Resource<ReserveDetail> cancelReserveRes = await reserveUseCases.cancelReserveUseCase.run(event.idReserve);
+      print('Response cancelation - $cancelReserveRes');
+
+      // Emitimos el estado según el resultado del Resource
+      emit(
+        state.copyWith(
+          cancelationReserveRes: cancelReserveRes,
+        )
+      );
     }); 
 
 

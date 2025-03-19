@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// PANTALLA 2 - DONDE EL CONDUCTOR VERA EL RECORRIDO DEL VIAJE QUE ESTA CREANDO
 class DriverMapBookingInfo extends StatefulWidget {
   final Map<String, dynamic> arguments;
 
@@ -130,23 +131,10 @@ class _DriverMapBookingInfoState extends State<DriverMapBookingInfo> {
           }  
           
           else {
-            return Container(
-              child: const Text('Error interno en ReserveDetail')
+            return const Center(
+              child: Text('Error interno en DriverMapBookingInfo')
             );
           }
-
-          // DELETE - ELIMINAR / Mock de TimeAndDistanceValues
-          // TimeAndDistanceValues mockTimeAndDistanceValues = TimeAndDistanceValues(
-          //   distance: Distance(text: "15 km", value: 10.0),
-          //   duration: Duration(text: "30 minutos", value: 15.0),
-          // );
-          // return Scaffold(
-          //     body: DriverMapBookingInfoContent(
-          //       state, 
-          //       mockTimeAndDistanceValues
-          //     )
-          //   );
-          // DELETE - ELIMINAR: Esta puesto para probar sin el back
         },
       ),
     );

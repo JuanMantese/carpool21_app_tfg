@@ -11,7 +11,8 @@ class MapTripPassengerState extends Equatable {
   final Resource? responseTimeAndDistance;
   final TimeAndDistanceValues? timeAndDistance;
   final bool isRouteDrawed;
-  final bool isPaid; // Verificamos si el conductor llego a destino
+  final bool isPaid; // Verificamos si el pasajero realizo el pago
+  final bool tripFinished; // Verificamos si el viaje finalizo
   
   final Completer<GoogleMapController>? controller;
   final LatLng? pickUpLatLng;
@@ -26,8 +27,9 @@ class MapTripPassengerState extends Equatable {
     this.responseGetReserveDetail,
     this.responseTimeAndDistance,
     this.timeAndDistance,
-    this.isPaid = false,
     this.isRouteDrawed = false,
+    this.isPaid = false,
+    this.tripFinished = false,
     this.controller,
     this.pickUpLatLng,
     this.destinationLatLng,
@@ -44,6 +46,7 @@ class MapTripPassengerState extends Equatable {
     TimeAndDistanceValues? timeAndDistance,
     bool? isRouteDrawed,
     bool? isPaid,
+    bool? tripFinished,
 
     Completer<GoogleMapController>? controller,
     LatLng? pickUpLatLng,
@@ -60,6 +63,7 @@ class MapTripPassengerState extends Equatable {
       timeAndDistance: timeAndDistance ?? this.timeAndDistance,
       isRouteDrawed: isRouteDrawed ?? this.isRouteDrawed,
       isPaid: isPaid ?? this.isPaid,
+      tripFinished: tripFinished ?? this.tripFinished,
       controller: controller ?? this.controller,
       pickUpLatLng: pickUpLatLng ?? this.pickUpLatLng,
       destinationLatLng: destinationLatLng ?? this.destinationLatLng,
@@ -78,6 +82,7 @@ class MapTripPassengerState extends Equatable {
     timeAndDistance,
     isRouteDrawed,
     isPaid,
+    tripFinished,
     controller,
     pickUpLatLng,
     destinationLatLng,

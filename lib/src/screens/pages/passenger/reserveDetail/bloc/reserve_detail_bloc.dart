@@ -165,6 +165,29 @@ class ReserveDetailBloc extends Bloc<ReserveDetailEvent, ReserveDetailState> {
       ));
     });
 
+    // Cancelación de una reserva
+    on<CancelReservation>((event, emit) async {
+      print('CancelReservation ---------------------');
+      print('ID de la reserva a cancelar: ${event.idReserve}');
+
+      emit(
+        state.copyWith(
+          cancelationReserveRes: Loading(),
+        )
+      );
+
+      // Cancelando la reserva según su ID
+      Resource<ReserveDetail> cancelReserveRes = await reserveUseCases.cancelReserveUseCase.run(event.idReserve);
+      print('Response cancelation - $cancelReserveRes');
+
+      // Emitimos el estado según el resultado del Resource
+      emit(
+        state.copyWith(
+          cancelationReserveRes: cancelReserveRes,
+        )
+      );
+    }); 
+
     // Reseteo los valores del State al ejecutar una reserva con Exito
     on<ResetState>((event, emit) {
       print('reseteo');

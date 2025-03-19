@@ -66,6 +66,7 @@ class TripDetailContent extends StatelessWidget {
             onUpdate: () {
               context.read<TripDetailBloc>().add(GetTripDetail(idTrip: tripDetail!.idTrip));
             },
+            message: 'Nuevas Reservas Disponibles',
           ),
       ],
     );
@@ -530,7 +531,6 @@ class TripDetailContent extends StatelessWidget {
                   Text(
                     'Iniciar Viaje',
                     style: TextStyle(
-                      // color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),

@@ -6,9 +6,9 @@ import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_regis
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/bloc/car_register_state.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/car_register_content.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/register/car_register_insurance.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -67,15 +67,32 @@ class _CarRegisterPageState extends State<CarRegisterPage> with RouteAware {
               'originPage': previousRoute
             });
 
-            Fluttertoast.showToast(msg: 'Registro exitoso', toastLength: Toast.LENGTH_LONG); 
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                'Comenzá a realizar viajes con nosotros',
+                customTitle: 'Registro del vehículo exitoso',
+                type: AlertType.success
+              );
+            });
+
+            // Reseteando el createdCardRes
+            context.read<CarRegisterBloc>().add(ResetState());
           }
 
           else if (carRegisterRes is ErrorData) {
             // Muestra un mensaje de Error
-            Fluttertoast.showToast(
-              msg: 'Error al realizar la reserva: ${carRegisterRes.message}',
-              toastLength: Toast.LENGTH_LONG,
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                carRegisterRes.message,
+                customTitle: 'Error al registrar el vehículo',
+                type: AlertType.error
+              );
+            });
+
+            // Reseteando el createdCardRes
+            context.read<CarRegisterBloc>().add(ResetCreatedCarRes());
           }
         },
         child: BlocBuilder<CarRegisterBloc, CarRegisterState>(

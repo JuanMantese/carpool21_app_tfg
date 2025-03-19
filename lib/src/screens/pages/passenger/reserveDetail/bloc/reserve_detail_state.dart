@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ReserveDetailState extends Equatable {
 
   final Resource? responseGetReserve;
+  final Resource? cancelationReserveRes;
   final ReserveDetail? reserveDetail;
   final LatLng? pickUpLatLng;
   final LatLng? destinationLatLng;
@@ -21,6 +22,7 @@ class ReserveDetailState extends Equatable {
 
   const ReserveDetailState({
     this.responseGetReserve,
+    this.cancelationReserveRes,
     this.reserveDetail, 
     this.pickUpLatLng,
     this.destinationLatLng,
@@ -34,6 +36,7 @@ class ReserveDetailState extends Equatable {
 
   ReserveDetailState copyWith({
     Resource? responseGetReserve,
+    Resource? cancelationReserveRes,
     ReserveDetail? reserveDetail,
     LatLng? pickUpLatLng,
     LatLng? destinationLatLng,
@@ -47,6 +50,7 @@ class ReserveDetailState extends Equatable {
   }) {
     return ReserveDetailState(
       responseGetReserve: responseGetReserve ?? this.responseGetReserve,
+      cancelationReserveRes: cancelationReserveRes ?? this.cancelationReserveRes,
       reserveDetail: reserveDetail ?? this.reserveDetail,
       pickUpLatLng: pickUpLatLng ?? this.pickUpLatLng,
       destinationLatLng: destinationLatLng ?? this.destinationLatLng,
@@ -62,6 +66,7 @@ class ReserveDetailState extends Equatable {
   @override
   List<Object?> get props => [
     responseGetReserve,
+    cancelationReserveRes,
     reserveDetail, 
     pickUpLatLng,
     destinationLatLng,

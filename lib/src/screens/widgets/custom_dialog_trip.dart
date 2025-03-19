@@ -24,6 +24,7 @@ class CustomDialogTrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -31,7 +32,7 @@ class CustomDialogTrip extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
-            Icons.directions_car_rounded,
+            Icons.map_outlined,
             size: 40,
             color: Color(0xFF006D59),
           ),
@@ -67,6 +68,8 @@ class CustomDialogTrip extends StatelessWidget {
                 );
               },
               style: OutlinedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: const Color.fromARGB(26, 0, 169, 144),
                 side: const BorderSide(color: Color(0xFF00A98F)),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -94,6 +97,8 @@ class CustomDialogTrip extends StatelessWidget {
                 );
               },
               style: OutlinedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: const Color.fromARGB(26, 0, 169, 144),
                 side: const BorderSide(color: Color(0xFF00A98F)),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -121,6 +126,8 @@ class CustomDialogTrip extends StatelessWidget {
                 );
               },
               style: OutlinedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: const Color.fromARGB(26, 0, 169, 144),
                 side: const BorderSide(color: Color(0xFF00A98F)),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -148,6 +155,8 @@ class CustomDialogTrip extends StatelessWidget {
                 );
               },
               style: OutlinedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: const Color.fromARGB(26, 0, 169, 144),
                 side: const BorderSide(color: Color(0xFF00A98F)),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -167,11 +176,12 @@ class CustomDialogTrip extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+            OutlinedButton(
               onPressed: () {
                 context.pop();
               },
               style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.transparent,
                 side: const BorderSide(color: Color(0xFF00A98F)),
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10)),

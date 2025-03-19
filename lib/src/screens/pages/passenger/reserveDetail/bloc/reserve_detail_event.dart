@@ -27,5 +27,11 @@ class ChangeMapCameraPosition extends ReserveDetailEvent {
 // Agregando la ruta al mapa
 class AddPolyline extends ReserveDetailEvent {}
 
+// Cancelación de la reserva
+class CancelReservation extends ReserveDetailEvent {
+  final int idReserve;
+  CancelReservation({ required this.idReserve });
+} 
+
 // Reseteo los valores del State al salir de la pantalla
 class ResetState extends ReserveDetailEvent {}

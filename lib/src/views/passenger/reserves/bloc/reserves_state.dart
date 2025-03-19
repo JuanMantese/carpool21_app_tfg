@@ -4,19 +4,23 @@ import 'package:equatable/equatable.dart';
 
 class ReservesState extends Equatable {
 
+  final Resource? cancelationReserveRes; // Resource - Respuesta esperada de la consulta a la API
   final Resource? response; // Resource - Respuesta esperada de la consulta a la API
   final ReservesAll? reservesAll;
 
   const ReservesState({
+    this.cancelationReserveRes,
     this.response,
     this.reservesAll
   });
 
   ReservesState copyWith({
+    Resource? cancelationReserveRes,
     Resource? response,
     ReservesAll? reservesAll
   }) {
     return ReservesState(
+      cancelationReserveRes: cancelationReserveRes ?? this.cancelationReserveRes,
       response: response ?? this.response,
       reservesAll: reservesAll ?? this.reservesAll
     );
@@ -24,6 +28,7 @@ class ReservesState extends Equatable {
   
   @override
   List<Object?> get props => [
+    cancelationReserveRes,
     response, 
     reservesAll
   ];

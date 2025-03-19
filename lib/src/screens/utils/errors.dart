@@ -1,5 +1,4 @@
 
-import 'package:carpool_21_app/src/data/dataSource/remote/service_handler.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/errorPage.dart';
 import 'package:carpool_21_app/src/screens/pages/errors/error_utils.dart';
 import 'package:dio/dio.dart';

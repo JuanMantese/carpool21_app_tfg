@@ -2,6 +2,7 @@
 import 'package:carpool_21_app/src/domain/models/car_info.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_button_action.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -62,7 +63,14 @@ class CarInfoContent extends StatelessWidget {
                 }
               ),
               CustomButtonAction(text: 'ELIMINAR VEHÍCULO', icon: Icons.delete_outline_rounded, 
-                onTapFunction: () {},
+                onTapFunction: () {
+                  showOverlayMessage(
+                    context, 
+                    'Por favor, contactate con soporte@carpool21.com para eliminar tu vehículo',
+                    customTitle: 'Eliminación de vehículo',
+                    type: AlertType.info
+                  );
+                },
                 colorTop: const Color(0xFF6D0000),
                 colorBottom: const Color(0xFFD20000),
               )

@@ -9,18 +9,26 @@ class GooglePlacesAutoComplete extends StatelessWidget {
   Function(Prediction prediction) onPlaceSelected;
   final bool enabled; // Verifico si el valor se pre-selecciono
 
-  GooglePlacesAutoComplete(this.controller, this.hintText, this.onPlaceSelected, {this.enabled = false, super.key});
+  GooglePlacesAutoComplete(
+    this.controller, 
+    this.hintText, 
+    this.onPlaceSelected, 
+    {
+      super.key,
+      this.enabled = false, 
+    }
+  );
 
   @override
   Widget build(BuildContext context) {
-    print('Entro enabled -----------------');
-    print(enabled);
+    print('GooglePlacesAutoComplete -----------------');
+    print('Pre-SELECTED $enabled');
     
     if (enabled) {
       // Si enabled es true, muestra un TextField deshabilitado
       return Container(
         height: 50,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18),
         child: TextField(
           controller: controller,
           decoration: InputDecoration(
@@ -35,14 +43,13 @@ class GooglePlacesAutoComplete extends StatelessWidget {
       );
     }
     
-    return Container(
+    return SizedBox(
       height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: GooglePlaceAutoCompleteTextField(
         textEditingController: controller,
-        googleAPIKey: "AIzaSyBwylGszcGHB5poVVHIDBUaTj9oNqwYk3Y",
+        googleAPIKey: "AIzaSyBwylGszcGHB5poVVHIDBUaTj9oNqwYk3Y", // GOOGLEMAPS API KEY
         boxDecoration: const BoxDecoration(
-          color: Colors.white
+          color: Colors.white,
         ),
         inputDecoration: InputDecoration(
           hintText: hintText,
@@ -59,22 +66,24 @@ class GooglePlacesAutoComplete extends StatelessWidget {
         itemClick: (Prediction prediction) {
           controller.text = prediction.description ?? "";
           controller.selection = TextSelection.fromPosition(
-            TextPosition(offset: prediction.description?.length ?? 0));
+            TextPosition(offset: prediction.description?.length ?? 0)
+          );
         },
         seperatedBuilder: const Divider(),
-        containerHorizontalPadding: 10,
+        containerHorizontalPadding: 18,
 
         // Customize list view item builder
         itemBuilder: (context, index, Prediction prediction) {
           return Container(
             padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
             child: Row(
               children: [
                 const Icon(Icons.location_on),
-                const SizedBox(
-                  width: 7,
-                ),
-                Expanded(child: Text("${prediction.description ?? ""}"))
+                const SizedBox(width: 7),
+                Expanded(child: Text(prediction.description ?? ""))
               ],
             ),
           );

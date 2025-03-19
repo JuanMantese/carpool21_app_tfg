@@ -4,6 +4,7 @@ import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginState.dart
 import 'package:carpool_21_app/src/screens/utils/blocFormItem.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_button.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_text_field.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -161,8 +162,25 @@ class LoginContentState extends State<LoginContent> {
                       ],
                     ),
                     onPressed: () {
-                      // Navigator.pushNamed(context, '/register');
                       context.push('/register');
+                    },
+                  ),
+                  TextButton(
+                    child: const Text(
+                      '¿Olvidaste tu contraseña?',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        height: 3,
+                      ),
+                    ),
+                    onPressed: () {
+                      showOverlayMessage(
+                        context, 
+                        'Por favor, contactate con soporte@carpool21.com para recuperar tu contraseña',
+                        customTitle: 'Recuperación de contraseña',
+                        type: AlertType.info
+                      );
                     },
                   ),
                 ],

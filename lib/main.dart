@@ -34,8 +34,9 @@ class CarPool21 extends StatelessWidget {
         builder: FToastBuilder(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
+          scaffoldBackgroundColor: Colors.white,
         ),
         routerConfig: appRouter,
         // navigatorObservers: [routeObserver],

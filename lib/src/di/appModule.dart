@@ -36,6 +36,7 @@ import 'package:carpool_21_app/src/domain/useCases/cards/cards_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/cards/create_card_use_case.dart';
 import 'package:carpool_21_app/src/domain/useCases/cards/get_all_cards_by_user_use_case.dart';
 import 'package:carpool_21_app/src/domain/useCases/cards/get_card_by_user_use_case.dart';
+import 'package:carpool_21_app/src/domain/useCases/reserves/cancel_reserve_use_case.dart';
 import 'package:carpool_21_app/src/domain/useCases/users/change_rol_use_case.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/get_user_session_use_case.dart';
 import 'package:carpool_21_app/src/domain/useCases/auth/get_user_token_use_case.dart';
@@ -266,7 +267,8 @@ abstract class AppModule {
   ReserveUseCases get reserveUseCases => ReserveUseCases(
     createReserve: CreateReserveUseCase(reserveRepository),
     getReserveDetailUseCase: GetReserveDetailUseCase(reserveRepository),
-    getAllReservesUseCase: GetAllReservesUseCase(reserveRepository)
+    getAllReservesUseCase: GetAllReservesUseCase(reserveRepository),
+    cancelReserveUseCase: CancelReserveUseCase(reserveRepository)
   );
 
 

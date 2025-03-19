@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+import 'package:carpool_21_app/src/screens/widgets/empty_state_card.dart';
 import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_state.dart';
 import 'package:carpool_21_app/src/views/passenger/reserves/reserves_item.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,19 @@ class ReservesContent extends StatelessWidget {
               padding: const EdgeInsets.only(top: 170, bottom: 40),
               child: Column(
                 children: [
+                  // Mostrar un mensaje si no hay viajes disponibles
+                  if (state.reservesAll!.futureReservations.isEmpty && state.reservesAll!.pastReservations.isEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 320, // Ajustando la altura - Quitando padding y margins
+                      width: double.infinity,
+                      child: const Center(
+                        child: EmptyStateCard(
+                          message: 'No tenés reservas registradas',
+                          image: "lib/assets/img/no-notification-illustration.png",
+                        ),
+                      ),
+                    ),
+
                   // Future Reservations
                   if (state.reservesAll!.futureReservations.isNotEmpty)
                     Column(
@@ -48,7 +62,7 @@ class ReservesContent extends StatelessWidget {
                         ...state.reservesAll!.futureReservations.map((reserve) {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: ReservesItem(reserve, 'futureTrips'),
+                            child: ReservesItem(reserve, 'futureReservations'),
                           );
                         }),
                       ],
@@ -81,10 +95,8 @@ class ReservesContent extends StatelessWidget {
                         ...state.reservesAll!.pastReservations
                             .map((reserve) {
                           return Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20),
-                            child:
-                                ReservesItem(reserve, 'historicalTrips'),
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: ReservesItem(reserve, 'historicalReservations'),
                           );
                         }),
                       ],

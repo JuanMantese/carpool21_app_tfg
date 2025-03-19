@@ -81,3 +81,8 @@ class FormSubmit extends CarRegisterEvent {}
 
 class UpdateUserSession extends CarRegisterEvent {}
 
+// Reseteo los valores de createdCardRes
+class ResetCreatedCarRes extends CarRegisterEvent {}
+
+// Reseteo los valores del State al salir de la pantalla
+class ResetState extends CarRegisterEvent {}

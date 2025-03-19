@@ -1,9 +1,10 @@
+// ignore_for_file: avoid_print
+import 'package:carpool_21_app/src/screens/widgets/empty_state_card.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_state.dart';
 import 'package:carpool_21_app/src/views/driver/trips/trips_item.dart';
 import 'package:flutter/material.dart';
 
 class TripsContent extends StatelessWidget {
-
   final TripsState state;
 
   const TripsContent(this.state, {super.key});
@@ -22,39 +23,20 @@ class TripsContent extends StatelessWidget {
               padding: const EdgeInsets.only(top: 170, bottom: 40),
               child: Column(
                 children: [
-                  // if (state.testingTripsAll!.currentTrip != null)
-                  //   Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       const Padding(
-                  //         padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  //         child: Text(
-                  //           'Viaje en Curso',
-                  //           style: TextStyle(
-                  //             fontSize: 18,
-                  //             fontWeight: FontWeight.bold,
-                  //             fontStyle: FontStyle.italic,
-                  //             color: Color(0xFF006D59),
-                  //           ),
-                  //         ),
-                  //       ),
-                  //       const Padding(
-                  //         padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  //         child: Divider(
-                  //           color: Color(0xFF006D59),
-                  //           thickness: 2,
-                  //         ),
-                  //       ),
-                  //       Container(
-                  //         padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //         child: TripsItem(
-                  //           state.testingTripsAll!.currentTrip,
-                  //           'currentTrip'
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
+                 // Mostrar un mensaje si no hay viajes disponibles
+                  if (state.tripsAll!.futureTrips.isEmpty && state.tripsAll!.futureTrips.isEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height - 320, // Ajustando la altura - Quitando padding y margins
+                      width: double.infinity,
+                      child: const Center(
+                        child: EmptyStateCard(
+                          message: 'No tenés viajes registrados',
+                          image: "lib/assets/img/no-notification-illustration.png",
+                        ),
+                      ),
+                    ),
 
+                  // Future Trips
                   if (state.tripsAll!.futureTrips.isNotEmpty)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

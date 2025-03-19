@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-// PANTALLA DONDE EL PASAJERO VA A VER EL RECORRIDO QUE HACE EL VIAJE QUE ESTA CONSULTANDO
 class DriverMapBookingInfoContent extends StatelessWidget {
   
   final DriverMapBookingInfoState state;
@@ -50,7 +49,6 @@ class DriverMapBookingInfoContent extends StatelessWidget {
         myLocationEnabled: false, // Icono de ubicacion predeterminado
         myLocationButtonEnabled: false, // Boton de accion para ir a la posicion del usuario
         onMapCreated: (GoogleMapController controller) {
-          // controller.setMapStyle('JSON');
           if (state.controller != null) {
             if (!state.controller!.isCompleted) {
               state.controller?.complete(controller);
@@ -65,6 +63,7 @@ class DriverMapBookingInfoContent extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * 0.39,
       padding: EdgeInsets.only(
+        top: 10,
         left: 20, 
         right: 20,
         bottom: MediaQuery.of(context).padding.bottom
@@ -139,44 +138,11 @@ class DriverMapBookingInfoContent extends StatelessWidget {
             leading: const Icon(Icons.timer),
           ),
 
-          // ListTile(
-          //   title: const Text(
-          //     'Precio',
-          //     style: TextStyle(
-          //       fontSize: 15
-          //     ),
-          //   ),
-          //   subtitle: Text(
-          //     '\$${timeAndDistanceValues.tripPrice}',
-          //     style: const TextStyle(
-          //       fontSize: 13
-          //     ),
-          //   ),
-          //   leading: const Icon(
-          //     Icons.money,
-          //     color: Color.fromARGB(255, 23, 135, 52),
-          //   ),
-          // ),
-
           // Botón para confirmar los datos del viaje y crear el viaje.
           const Spacer(),
           CustomButton(
             text: 'Confirmar recorrido',
             onPressed: () {
-              // Navigator.pushNamed(context, '/driver/createTrip',
-              //   arguments: {
-              //     'pickUpNeighborhood': state.pickUpNeighborhood,
-              //     'pickUpText': state.pickUpText,
-              //     'pickUpLatLng': state.pickUpLatLng,
-              //     'destinationNeighborhood': state.destinationNeighborhood,
-              //     'destinationText': state.destinationText,
-              //     'destinationLatLng': state.destinationLatLng,
-              //     'departureTime': state.departureTime,
-              //     'timeAndDistanceValues': timeAndDistanceValues,
-              //     'state': state,
-              //   }
-              // );
-
               context.push('/driver/0/createTrip', extra: {
                 'pickUpNeighborhood': state.pickUpNeighborhood,
                 'pickUpText': state.pickUpText,

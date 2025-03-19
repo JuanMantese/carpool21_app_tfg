@@ -35,7 +35,7 @@ class CardRegisterState extends Equatable {
       cardHolder: cardHolder ?? this.cardHolder,
       expiryDate: expiryDate ?? this.expiryDate,
       cvv: cvv ?? this.cvv,
-      createdCardRes: createdCardRes ?? this.createdCardRes
+      createdCardRes: createdCardRes // No sobreescribo el valor porque quiero controlarlo siempre que realizo un cambio
     );
   }
 

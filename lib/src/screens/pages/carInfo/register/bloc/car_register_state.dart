@@ -76,7 +76,7 @@ class CarRegisterState extends Equatable {
       insuranceExpiration: insuranceExpiration ?? this.insuranceExpiration,
       policyNumber: policyNumber ?? this.policyNumber,
       cuilCuit: cuilCuit ?? this.cuilCuit,
-      response: response ?? this.response
+      response: response
     );
   }
 

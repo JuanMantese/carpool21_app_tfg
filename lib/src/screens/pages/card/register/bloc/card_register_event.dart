@@ -27,3 +27,9 @@ class CvvChanged extends CardRegisterEvent {
 
 // Submit Form Event
 class FormSubmit extends CardRegisterEvent {}
+
+// Reseteo los valores de createdCardRes
+class ResetCreatedCardRes extends CardRegisterEvent {}
+
+// Reseteo los valores del State al salir de la pantalla
+class ResetState extends CardRegisterEvent {}

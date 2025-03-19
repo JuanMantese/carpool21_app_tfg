@@ -1,12 +1,9 @@
 // ignore_for_file: avoid_print
-import 'dart:convert';
-import 'package:carpool_21_app/src/data/api/apiConfig.dart';
 import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
 import 'package:carpool_21_app/src/domain/utils/list_to_string.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 
 class AuthService {
 
@@ -16,42 +13,7 @@ class AuthService {
   // Constructor
   AuthService(this._dio, this.token);
 
-  // Future<Resource<AuthResponse>> login(String email, String password) async {
-  //   try {
-  //     Uri url = Uri.http(ApiConfig.API_CARPOOL21, '/auth/login'); // Creation of the URL path
-      
-  //     Map<String, String> headers = {
-  //       'Content-Type': 'application/json'
-  //     }; // We specify that the information sent is of type JSON
-      
-  //     String body = json.encode({
-  //       'email': email,
-  //       'password': password
-  //     });
-
-  //     // Making the request. I specify the URL, the headers and the body
-  //     final response = await http.post(url, headers: headers, body: body);
-
-  //     // Decoding the information to be able to interpret it in Dart
-  //     final data = json.decode(response.body);
-
-  //     if (response.statusCode == 200 || response.statusCode == 201) {
-  //       AuthResponse authResponse = AuthResponse.fromJson(data);
-  //       print('Data Remote: ${authResponse.toJson()}');
-  //       print('Token: ${authResponse.token}');
-
-  //       return Success(authResponse);
-  //     } else {
-  //       print('Response status login: ${response.statusCode}');
-  //       print('Response body login: ${response.body}');
-  //       return ErrorData(listToString(data['message']));
-  //     }
-  //   } catch (error) {
-  //     print('Error login service: $error');
-  //     return ErrorData(error.toString());
-  //   }
-  // }
-
+  // Login Service
   Future<Resource<AuthResponse>> login(String email, String password) async {
     try {
       final response = await _dio.post('/auth/login', 
@@ -75,10 +37,13 @@ class AuthService {
     } on DioException catch (e) {
       // Manejo de errores específicos de Dio
       print('Error login service: $e');
-      if (e.response != null) {
-        return ErrorData(e.response!.data['message'] ?? e.message);
+      // Verificar si 'message' es una lista en el error de la respuesta
+      final message = e.response!.data['message'];
+      
+      if (message is List) {
+        return ErrorData(message.join(', '));  // Convertimos la lista en un String
       } else {
-        return ErrorData(e.message!);
+        return ErrorData(message ?? e.message);  // Si no es lista, usamos el mensaje original
       }
     } catch (error) {
       print('Error login service: $error');
@@ -128,28 +93,34 @@ class AuthService {
     }
   }
 
+  // Register New User Service
   Future<Resource<AuthResponse>> register(User user) async {
     try {
-      Uri url = Uri.http(ApiConfig.API_CARPOOL21, '/auth/register'); // Creation of the URL path
-      Map<String, String> headers = {'Content-Type': 'application/json'}; // We specify that the information sent is of type JSON
-      String body = json.encode(user);
-
-      // Making the request. I specify the URL, the headers and the body
-      final response = await http.post(url, headers: headers, body: body);
-
-      // Decoding the information to be able to interpret it in Dart
-      final data = json.decode(response.body);
+      final response = await _dio.post('/auth/register', 
+        data: user.toJson()
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
         AuthResponse authResponse = AuthResponse.fromJson(data);
-        print('Data register: ${authResponse.toJson()}');
-        print('Token register: ${authResponse.token}');
-
+        print('Data Remote: ${authResponse.toJson()}');
+        // print('Token: ${authResponse.token}');
+        // print('RefreshToken: ${authResponse.refreshToken}');
+        
         return Success(authResponse);
       } else {
-        print('Response status register: ${response.statusCode}');
-        print('Response body register: ${response.body}');
-        return ErrorData(listToString(data['message']));
+        return ErrorData(listToString(response.data['message']));
+      }
+    } on DioException catch (e) {
+      // Manejo de errores específicos de Dio
+      print('Error register service: $e');
+      // Verificar si 'message' es una lista en el error de la respuesta
+      final message = e.response!.data['message'];
+      
+      if (message is List) {
+        return ErrorData(message.join(', '));  // Convertimos la lista en un String
+      } else {
+        return ErrorData(message ?? e.message);  // Si no es lista, usamos el mensaje original
       }
     } catch (error) {
       print('Error register service: $error');

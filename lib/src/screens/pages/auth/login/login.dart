@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-// import 'package:another_flushbar/flushbar.dart';
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/blocSocketIO/socket_io_event.dart';
 import 'package:carpool_21_app/src/domain/models/auth_response.dart';
@@ -8,6 +7,7 @@ import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginBloc.dart'
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginEvent.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/bloc/loginState.dart';
 import 'package:carpool_21_app/src/screens/pages/auth/login/loginContent.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,13 +30,14 @@ class _LoginPageState extends State<LoginPage> {
           final response = state.response;
           if (response is ErrorData) {
             print('Error Data: ${response.message}');
-            Fluttertoast.showToast(
-              msg: response.message, 
-              toastLength: Toast.LENGTH_LONG,
-              timeInSecForIosWeb: 2,
-              textColor: Colors.white,
-              fontSize: 16.0
-            ); 
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                response.message,
+                customTitle: 'Error al iniciar sesión',
+                type: AlertType.error
+              );
+            });
           } else if (response is Success) {
             print('Success Data: ${response.data}');
             final authResponse = response.data as AuthResponse;
@@ -48,12 +49,9 @@ class _LoginPageState extends State<LoginPage> {
             context.read<SocketIOBloc>().add(ConnectSocketIO(idUser: authResponse.user!.idUser.toString()));
 
             if (authResponse.user!.roles!.length > 1) {
-              // Navigator.pushNamedAndRemoveUntil(context, 'roles', (route) => false);
-              // Navigator.pushNamedAndRemoveUntil(context, '/passenger/home', (route) => false);
               context.go('/passenger/0');
             }
             else {
-              // Navigator.pushNamedAndRemoveUntil(context, '/passenger/home', (route) => false);
               context.go('/passenger/0');
             }
 

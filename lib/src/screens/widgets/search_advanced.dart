@@ -12,12 +12,17 @@ class AdvancedFiltersModal extends StatefulWidget {
 
 class _AdvancedFiltersModalState extends State<AdvancedFiltersModal> {
   String originDestination = 'Origen/Destino';
-  String campus = 'Sedes';
+  String campusKey = 'ALL';
   TimeOfDay? startTime;
   TimeOfDay? endTime;
 
   List<String> originDestinationOptions = ['Origen/Destino', 'Origen', 'Destino'];
-  List<String> campusOptions = ['Sedes', 'Campus', 'Nva Cordoba'];
+
+  List<Map<String, String>> campusOptions = [
+    {'label': 'Sedes', 'key': 'ALL'},
+    {'label': 'Campus Universitario', 'key': 'Campus Siglo 21'},
+    {'label': 'Nueva Córdoba', 'key': 'Cede Nueva Córdoba'},
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +31,15 @@ class _AdvancedFiltersModalState extends State<AdvancedFiltersModal> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('¡Filtros para buscar tu viaje!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            '¡Filtros para buscar tu viaje!', 
+            style: TextStyle(
+              fontSize: 20, 
+              fontWeight: FontWeight.bold
+            )
+          ),
           const SizedBox(height: 20),
+
           DropdownButtonFormField(
             value: originDestination,
             items: originDestinationOptions.map((String option) {
@@ -47,17 +59,18 @@ class _AdvancedFiltersModalState extends State<AdvancedFiltersModal> {
             ),
           ),
           const SizedBox(height: 20),
+
           DropdownButtonFormField(
-            value: campus,
-            items: campusOptions.map((String option) {
+            value: campusKey,
+            items: campusOptions.map((campus) {
               return DropdownMenuItem(
-                value: option,
-                child: Text(option),
+                value: campus['key'],
+                child: Text(campus['label']!),
               );
             }).toList(),
             onChanged: (value) {
               setState(() {
-                campus = value as String;
+                campusKey = value as String;
               });
             },
             decoration: InputDecoration(
@@ -66,6 +79,7 @@ class _AdvancedFiltersModalState extends State<AdvancedFiltersModal> {
             ),
           ),
           const SizedBox(height: 20),
+
           Row(
             children: [
               Expanded(
@@ -120,23 +134,30 @@ class _AdvancedFiltersModalState extends State<AdvancedFiltersModal> {
             ],
           ),
           const SizedBox(height: 20),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               ElevatedButton(
                 onPressed: () {
+                  // Obtener el label correspondiente al key seleccionado
+                  String selectedCampusKey = campusOptions.firstWhere(
+                    (campus) => campus['key'] == campusKey,
+                    orElse: () => {'key': 'ALL', 'label': 'Sedes'},
+                  )['key']!;
+
                   widget.onFilter(
-                    originDestination, campus, startTime ?? const TimeOfDay(hour: 0, minute: 0), 
+                    originDestination, 
+                    selectedCampusKey,
+                    startTime ?? const TimeOfDay(hour: 0, minute: 0), 
                     endTime ?? const TimeOfDay(hour: 23, minute: 59)
                   );
-                  // Navigator.pop(context);
                   context.pop();
                 },
                 child: const Text('Filtrar'),
               ),
               OutlinedButton(
                 onPressed: () {
-                  // Navigator.pop(context);
                   context.pop();
                 },
                 child: const Text('Cancelar'),

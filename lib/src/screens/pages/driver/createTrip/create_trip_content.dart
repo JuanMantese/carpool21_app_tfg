@@ -156,8 +156,7 @@ class CreateTripContent extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          items: <String>['1', '2', '3', '4', '5', '6']
-              .map<DropdownMenuItem<String>>((String value) {
+          items: <String>['1', '2', '3', '4', '5', '6'].map<DropdownMenuItem<String>>((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
@@ -166,6 +165,7 @@ class CreateTripContent extends StatelessWidget {
           onChanged: onAvailableSeatsChanged,
         ),
         const SizedBox(height: 16.0),
+        
         TextFormField(
           maxLength: 200,
           minLines: 4,

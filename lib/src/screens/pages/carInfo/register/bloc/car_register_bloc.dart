@@ -238,5 +238,21 @@ class CarRegisterBloc extends Bloc<CarRegisterEvent, CarRegisterState> {
       User userDetail = userDetailRes.data;
       await authUseCases.updateUserSession.run(userDetail);
     });
+
+    // Reseteo los valores del State al salir de pantalla
+    on<ResetCreatedCarRes>((event, emit) async {
+      // Asegúrate de cancelar la suscripción antes de iniciar otra.
+      emit(
+        state.copyWith(
+          response: null,
+          formKey: formKey,
+        )
+      );
+    });
+
+    // Reseteo los valores del State al salir de pantalla
+    on<ResetState>((event, emit) {
+      emit(const CarRegisterState()); // Emitimos el estado inicial limpio.
+    });
   }
 }

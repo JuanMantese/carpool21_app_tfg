@@ -158,4 +158,52 @@ class ReserveService {
       }
     }
   }
+
+  // Consultando el detalle de una reserva
+  Future<Resource<ReserveDetail>> cancelReserve(int idReserve) async {
+    try {
+      // Construimos la ruta para obtener el detalle de la reserva
+      String path = '/trip-reservation/cancel/$idReserve';
+      
+      // Hacemos la petición con el método GET a la ruta construida
+      Response response = await serviceHandler.request(
+        "DELETE", 
+        path, 
+        1, 
+        168,
+        refresh: true, // Forzamos la solicitud para evitar la caché
+      );
+
+      // Procesamos la respuesta
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ReserveDetail cancelResDetail = ReserveDetail.fromJson(response.data);
+        print('Data cancelReserve: ${cancelResDetail.toJson()}');
+        return Success(cancelResDetail);
+      } else {
+        print('ERROR cancelReserve Service --------------------------------');
+        print('status: ${response.statusCode}');
+        print('Response body: ${response.data}');
+        return ErrorData(response.data['message']);
+      }
+    } catch (e) {
+      print('CancelReserve Service Error');
+      if (e is TokenError) {
+        // Maneja el error del token, por ejemplo, redirigiendo al usuario al login
+        print(e.message);
+        return ErrorData(e.message);
+      } else if (e is DioException) {
+        // Maneja los errores específicos de Dio
+        print('Dio error: ${e.message}');
+        return ErrorData('Dio error: ${e.message}');
+      } else if (e is ConnectionError) {
+        // Maneja los errores de conexión
+        print('Connection error: ${e.message}');
+        return ErrorData('Connection error: ${e.message}');
+      } else {
+        // Maneja otros tipos de errores
+        print('Unhandled error: $e');
+        return ErrorData('Unhandled error: $e');
+      }
+    }
+  }
 }

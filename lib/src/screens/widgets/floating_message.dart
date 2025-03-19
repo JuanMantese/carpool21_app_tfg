@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class FloatingMessage extends StatefulWidget {
   final Duration displayDuration;
   final VoidCallback onUpdate;
+  final String? message;
 
   const FloatingMessage({
     super.key, 
     this.displayDuration = const Duration(seconds: 5),
     required this.onUpdate,
+    this.message
   });
 
   @override
@@ -102,14 +104,14 @@ class _FloatingMessageState extends State<FloatingMessage> with SingleTickerProv
                           height: 50,
                           color: const Color.fromARGB(255, 0, 87, 109),
                           alignment: Alignment.center,
-                          child: const Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'Nuevos Viajes Disponibles',
-                                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                                widget.message ?? 'Nuevos Viajes Disponibles',
+                                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                               ),
-                              Text(
+                              const Text(
                                 'Actualizar arriba',
                                 style: TextStyle(color: Colors.white, fontSize: 10),
                               ),

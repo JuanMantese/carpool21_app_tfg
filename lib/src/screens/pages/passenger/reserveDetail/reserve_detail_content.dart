@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/reserve_detail_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/reserve_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/reserve_detail_state.dart';
+import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,12 +31,10 @@ class ReserveDetailContent extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(
             top: 26,
-            // bottom: MediaQuery.of(context).padding.bottom + 26,
             right: 26,
             left: 26
           ),
           child: ListView(
-            // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _driverInfo(context),
               const SizedBox(height: 16),
@@ -47,7 +47,9 @@ class ReserveDetailContent extends StatelessWidget {
               const SizedBox(height: 16),
               _buildPayment(context),
               const SizedBox(height: 28),
-              _buttonsAction(context)                  
+
+              if (reserveDetail.cancellationDate == null)
+                _buttonsAction(context)
             ],
           ),
         ),
@@ -412,7 +414,7 @@ class ReserveDetailContent extends StatelessWidget {
           style: TextStyle(fontSize: 15),
         ),
         subtitle: Text(
-          reserveDetail.payment?.paymentMethod ?? '',
+          reserveDetail.payment?.paymentMethod ?? 'Efectivo',
           style: const TextStyle(fontSize: 13),
         ),
         leading: const Icon(
@@ -447,7 +449,19 @@ class ReserveDetailContent extends StatelessWidget {
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom,),
       child: Center(
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            CustomDialog(
+              context: context,
+              title: 'Cancelar Reserva',
+              content: 'Estás por cancelar la reserva al viaje ${reserveDetail.tripRequest.idTrip} ¿Querés confirmarlo?',
+              icon: Icons.check_circle_rounded,
+              onPressedSend: () {
+                context.read<ReserveDetailBloc>().add(CancelReservation(idReserve: reserveDetail.idReservation));
+              },
+              textSendBtn: 'Confirmar',
+              textCancelBtn: 'Cancelar',
+            );
+          },
           style: OutlinedButton.styleFrom(
             fixedSize: const Size(180, 50),
             padding: const EdgeInsets.only(

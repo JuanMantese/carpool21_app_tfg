@@ -24,12 +24,17 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
   ): super(const DriverMapFinderState()) {
     
     on<DriverMapFinderInitEvent>((event, emit) {
-      Completer<GoogleMapController> controller = Completer<GoogleMapController>();
+      print('InitializeMap -------------------------------------');
+
+      // Inicializo el controlador del mapa cada vez que ingreso a la pantalla con Mapa
+      Completer<GoogleMapController> initializeController = Completer<GoogleMapController>();
+      
       emit(
         state.copyWith(
-          controller: controller
+          controller: initializeController,
         )
       );
+      print('Completed -------------------------------------');
     });
 
     on<UpdateDepartureTime>((event, emit) {
@@ -45,8 +50,8 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
       // User Position
       Position position = await geolocationUseCases.findPosition.run();
       print('Entrando en Find Position ---------------------------------');
-      print('Lat: ${position.latitude}');
-      print('Lng: ${position.longitude}');
+      print('Position Lat: ${position.latitude}');
+      print('Position Lng: ${position.longitude}');
 
       // Trayendo la imagen del marker
       BitmapDescriptor imageMarker = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-current-location.png');
@@ -75,9 +80,6 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
 
       // Modificando la posicion de la camara en el mapa
       add(ChangeMapCameraPosition(lat: position.latitude, lng: position.longitude));
-
-      print('Position Lat: ${position.latitude}');
-      print('Position Lng: ${position.longitude}');
     });
 
     // Ajustando la posicion de la camara (y el marker) en el mapa segun la posicion que el usuario elijio
@@ -101,31 +103,7 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
       } catch (e) {
         print('ERROR EN ChangeMapCameraPosition: $e');
       }
-    });  
-
-    // Obteniendo ubicacion del marker en el mapa al mover la camara
-    // on<OnCameraMove>((event, emit) {
-    //   emit(
-    //     state.copyWith(
-    //       cameraPosition: event.cameraPosition
-    //     )
-    //   );
-    // });
-
-    // Al terminar de mover la camara, fijo el marcador en la posicion donde esta se encuentra
-    // Estableciendo la direccion la que el marker esta ubicado
-    // on<OnCameraIdle>((event, emit) async {
-    //   try {
-    //     PlacemarkData placemarkData = await geolocationUseCases.getPlacemarkData.run(state.cameraPosition);
-    //     emit(
-    //       state.copyWith(
-    //         placemarkData: placemarkData
-    //       )
-    //     );  
-    //   } catch (e) {
-    //     print('OnCameraIdle Error: $e');
-    //   }
-    // });
+    });
 
     on<SelectPredefinedLocation>((event, emit) async {
       print('SelectPredefinedLocation ---------------------------------');
@@ -138,19 +116,22 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
       PlacemarkData placemarkData  = await geolocationUseCases.getLocationData.run(event.location);
       print('PlacemarkData: ${placemarkData.address}');
 
-      Marker destinationMarker = Marker(
+      Marker locationSelectedMarker = Marker(
         markerId: MarkerId(event.locationType == 'pickUp' ? 'PickUpLocation' : 'DestinationLocation'),
         position: event.location,
-        infoWindow: InfoWindow(title: event.locationType == 'pickUp' ? 'Lugar de Origen' : 'Lugar de Destino'),
+        infoWindow: InfoWindow(
+          title: event.locationType == 'pickUp' ? 'Lugar de Origen' : 'Lugar de Destino',
+          snippet: event.address
+        ),
         icon: markerIcon,
       );
 
       // Add marker to existing markers and update state
       final updatedMarkers = Map<MarkerId, Marker>.from(state.markers)
-        ..[destinationMarker.markerId] = destinationMarker;
+        ..[locationSelectedMarker.markerId] = locationSelectedMarker;
 
       if (event.locationType == 'pickUp') {
-        print('pickUp entramos');
+        print('Location Selected PICKUP');
         emit(state.copyWith(
           pickUpNeighborhood: event.neighborhood,
           pickUpText: event.address,
@@ -159,7 +140,7 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
           isLocationSelected: true
         ));
       } else {
-        print('destination entramos');
+        print('Location Selected DESTINATION');
         emit(state.copyWith(
           destinationNeighborhood: event.neighborhood,
           destinationText: event.address,
@@ -228,6 +209,9 @@ class DriverMapFinderBloc extends Bloc<DriverMapFinderEvent, DriverMapFinderStat
           isLocationSelected: false
         )
       );
+
+      // Move camera to the new marker position
+      add(ChangeMapCameraPosition(lat: event.lat, lng: event.lng));
 
       if (state.pickUpLatLng != null) {
         add(DrawPolyline());

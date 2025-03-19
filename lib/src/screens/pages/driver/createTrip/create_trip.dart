@@ -10,12 +10,13 @@ import 'package:carpool_21_app/src/screens/pages/driver/createTrip/bloc/create_t
 import 'package:carpool_21_app/src/screens/pages/driver/createTrip/create_trip_content.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// PANTALLA 3 - DONDE EL CONDUCTOR COMPLETARA LOS DATOS DEL VIAJE
 class CreateTripPage extends StatefulWidget {
   final Map<String, dynamic> arguments;
 
@@ -58,9 +59,6 @@ class _CreateTripState extends State<CreateTripPage> {
       destinationLatLng = args['destinationLatLng'];
       departureTime = args['departureTime'];
       timeAndDistanceValues = args['timeAndDistanceValues'];
-      
-      print(pickUpNeighborhood);
-      print(destinationNeighborhood);
       
       context.read<CreateTripBloc>().add(InitializeTrip(
         pickUpNeighborhood: pickUpNeighborhood,
@@ -114,14 +112,23 @@ class _CreateTripState extends State<CreateTripPage> {
               'idDriverRequest':  idDriverRequest,
             });
 
-            Fluttertoast.showToast(msg: 'Solicitud enviada', toastLength: Toast.LENGTH_LONG);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                'Podes consultar los detalles de tu viaje aquí',
+                customTitle: 'Viaje creado exitosamente',
+                type: AlertType.success
+              );
+            });
           }
           
           // Error Status
           else if (responseDriverTripRequest is ErrorData) {
-            Fluttertoast.showToast(
-              msg: 'Error al realizar la reserva: ${responseDriverTripRequest.message}',
-              toastLength: Toast.LENGTH_LONG,
+            showOverlayMessage(
+              context, 
+              responseDriverTripRequest.message,
+              customTitle: 'Error al registrar el Viaje',
+              type: AlertType.error
             );
           }
         },
@@ -196,18 +203,23 @@ class _CreateTripState extends State<CreateTripPage> {
                   // Error Status
                   else if (resVehicleList is ErrorData) {
                     Future.microtask(() {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(resVehicleList.message)),
-                      );
-                      Navigator.of(context).pop(); // Redirige al Home
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showOverlayMessage(
+                          context, 
+                          resVehicleList.message,
+                          customTitle: 'Error al obtener los vehículos registrados',
+                          type: AlertType.error
+                        );
+                      });
+                      context.pop(); // Redirige al Home
                     });
 
                     return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige
                   }  
                   
                   else {
-                    return Container(
-                      child: const Text('Error interno en ReserveDetail')
+                    return const Center(
+                      child: Text('Error interno en ReserveDetail')
                     );
                   }
                 },
@@ -258,7 +270,10 @@ class _CreateTripState extends State<CreateTripPage> {
         child: const Text(
           'REGISTRAR VIAJE',
           style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.bold, fontSize: 19),
+            color: Colors.white, 
+            fontWeight: FontWeight.bold, 
+            fontSize: 19
+          ),
         ),
       ),
     );

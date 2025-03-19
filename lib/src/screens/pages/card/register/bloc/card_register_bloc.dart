@@ -1,5 +1,7 @@
 
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/card_request.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/cards/cards_use_cases.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
 import 'package:carpool_21_app/src/screens/pages/card/register/bloc/card_register_event.dart';
@@ -10,7 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CardRegisterBloc extends Bloc<CardRegisterEvent, CardRegisterState> {
 
-  // AuthUseCases authUseCases;
+  AuthUseCases authUseCases;
   CardsUseCases cardsUseCases;
   // UserUseCases userUseCases;
 
@@ -18,7 +20,7 @@ class CardRegisterBloc extends Bloc<CardRegisterEvent, CardRegisterState> {
 
   // Constructor
   CardRegisterBloc(
-    // this.authUseCases,
+    this.authUseCases,
     this.cardsUseCases,
     // this.userUseCases,
   ): super(const CardRegisterState()) {
@@ -77,11 +79,20 @@ class CardRegisterBloc extends Bloc<CardRegisterEvent, CardRegisterState> {
     });
 
     on<CvvChanged>((event, emit) {
+      final cvvValue = event.cvvInput.value;
+      String? error;
+
+      if (cvvValue.isEmpty) {
+        error = 'Ingrese el CVV';
+      } else if (cvvValue.length < 3) {
+        error = 'El cvv debe tener al menos 3 dígitos';
+      }
+
       emit(
         state.copyWith(
           cvv: BlocFormItem(
-            value: event.cvvInput.value,
-            error: event.cvvInput.value.isEmpty ? 'Ingrese el CVV' : null
+            value: cvvValue,
+            error: error
           ),
           formKey: formKey
         )
@@ -102,24 +113,53 @@ class CardRegisterBloc extends Bloc<CardRegisterEvent, CardRegisterState> {
         )
       );
 
-      // PARA QUE APAREZCA El estado de Loading (circle) - Tirar el Back y que quede cargando - ELIMINAR
-      Resource response = await cardsUseCases.createCard.run(
-        CardRequest(
-          cardNumber: state.cardNumber.value, 
-          ownerName: state.cardHolder.value, 
-          expirationDate: CardRequest.rotateExpirationDate(state.expiryDate.value),
-          cvv: int.parse(state.cvv.value),
-        ),
-        12
-      );
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
 
-      // Issuance of status change - Success/Error
+      if (authResponse != null && authResponse.user != null) {
+        print('Datos del usuario obtenidos - Driver Trips: ${authResponse.user?.idUser}');
+
+        // PARA QUE APAREZCA El estado de Loading (circle) - Tirar el Back y que quede cargando - ELIMINAR
+        Resource response = await cardsUseCases.createCard.run(
+          CardRequest(
+            cardNumber: state.cardNumber.value, 
+            ownerName: state.cardHolder.value, 
+            expirationDate: CardRequest.rotateExpirationDate(state.expiryDate.value),
+            cvv: int.parse(state.cvv.value),
+          ),
+          12
+        );
+
+        // Issuance of status change - Success/Error
+        emit(
+          state.copyWith(
+            createdCardRes: response,
+            formKey: formKey,
+          )
+        );
+      } else {
+        print('******************* Card Register Bloc - AuthResponse es Null *******************');
+        emit(
+          state.copyWith(
+            createdCardRes: ErrorData('RegisterCardMethod - AuthResponse es Null')
+          )
+        );
+      }
+    });
+
+    // Reseteo los valores del State al salir de pantalla
+    on<ResetCreatedCardRes>((event, emit) async {
+      // Asegúrate de cancelar la suscripción antes de iniciar otra.
       emit(
         state.copyWith(
-          createdCardRes: response,
+          createdCardRes: null,
           formKey: formKey,
         )
       );
+    });
+
+    // Reseteo los valores del State al salir de pantalla
+    on<ResetState>((event, emit) {
+      emit(const CardRegisterState()); // Emitimos el estado inicial limpio.
     });
   }
 }

@@ -3,8 +3,10 @@ import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/re
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/reserve_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/bloc/reserve_detail_state.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/reserveDetail/reserve_detail_content.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ReserveDetailPage extends StatefulWidget {
   final Map<String, dynamic> arguments;
@@ -55,6 +57,7 @@ class _ReserveDetailPageState extends State<ReserveDetailPage> {
       body: BlocBuilder<ReserveDetailBloc, ReserveDetailState>(
         builder: (context, state) {
           final responseReserveDetail = state.responseGetReserve;
+          final cancelReserveDetail = state.cancelationReserveRes;
 
           if (responseReserveDetail is Loading) {
             return const Center(child: CircularProgressIndicator());
@@ -63,6 +66,33 @@ class _ReserveDetailPageState extends State<ReserveDetailPage> {
           // Success Status 
           else if (responseReserveDetail is Success) {
             final reserveDetail = responseReserveDetail.data;
+
+            if (cancelReserveDetail is Loading) {
+              return const Center(child: CircularProgressIndicator());
+            } 
+            else if (cancelReserveDetail is Success) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showOverlayMessage(
+                  context, 
+                  'Volvé a reservar tu próximo viaje con nosotros',
+                  customTitle: 'Reserva cancelada exitosamente',
+                  type: AlertType.success
+                );
+              });
+
+              // Redirige al Home después de mostrar el mensaje
+              Future.microtask(() => context.pop());
+            } 
+            else if (cancelReserveDetail is ErrorData) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showOverlayMessage(
+                  context, 
+                  cancelReserveDetail.message,
+                  customTitle: 'Error al cancelar la reserva',
+                  type: AlertType.error
+                );
+              });
+            }
 
             return ReserveDetailContent(
               reserveDetail, 
@@ -74,18 +104,23 @@ class _ReserveDetailPageState extends State<ReserveDetailPage> {
           else if (responseReserveDetail is ErrorData) {
             // Muestra un mensaje y redirige al Home
             Future.microtask(() {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(responseReserveDetail.message)),
-              );
-              Navigator.of(context).pop(); // Redirige al Home
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                showOverlayMessage(
+                  context, 
+                  responseReserveDetail.message,
+                  customTitle: 'Error al obtener la reserva',
+                  type: AlertType.error
+                );
+              });
+              context.pop(); // Redirige al Home
             });
 
             return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige
           }
 
           else {
-            return Container(
-              child: const Text('Error interno en ReserveDetail')
+            return const Center(
+              child: Text('Error interno en ReserveDetail')
             );
           }
         }

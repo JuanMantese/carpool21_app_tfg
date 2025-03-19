@@ -1,12 +1,14 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/src/domain/models/trips_all.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_bloc.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_event.dart';
 import 'package:carpool_21_app/src/views/driver/trips/bloc/trips_state.dart';
 import 'package:carpool_21_app/src/views/driver/trips/trips_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class TripsView extends StatefulWidget {
   const TripsView({super.key});
@@ -40,36 +42,27 @@ class _TripsPageState extends State<TripsView> with AutomaticKeepAliveClientMixi
 
           // Estado de éxito
           else if (response is Success<TripsAll>) {
-            final tripsAll = response.data;
-
-            // Mostrar un mensaje si no hay viajes disponibles
-            if (tripsAll.futureTrips.isEmpty && tripsAll.pastTrips.isEmpty) {
-              return const Center(
-                child: Text(
-                  'No hay viajes disponibles.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-              );
-            }
-
             return TripsContent(state);
           }
 
           else if (response is ErrorData) {
             // Muestra un mensaje y redirige al Home
             Future.microtask(() {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(response.message)),
+              showOverlayMessage(
+                context, 
+                response.message,
+                customTitle: 'Error al obtener los viajes',
+                type: AlertType.error
               );
-              Navigator.of(context).pop(); // Redirige al Home
+              context.go('/driver/0'); // Redirige al Home del driver
             });
 
             return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige
           }
 
           else {
-            return Container(
-              child: const Text('Error interno en TripsAvailable')
+            return const Center(
+              child: Text('Error interno en TripsView')
             );
           }
         },

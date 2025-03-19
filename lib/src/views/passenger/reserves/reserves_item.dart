@@ -1,6 +1,10 @@
 
 import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
+import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_bloc.dart';
+import 'package:carpool_21_app/src/views/passenger/reserves/bloc/reserves_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -17,15 +21,17 @@ class ReservesItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         int? idReserve = reserveDetail?.idReservation;
-        // Navigator.pushNamed(context, '/passenger/reserve/detail',
-        //   arguments:{
-        //     'idReserve': idReserve,
-        //   }
-        // );
 
-        context.push('/passenger/0/reserve/detail', extra: {
-          'idReserve': idReserve,
-        });
+        // Si el viaje esta INCOURSE, se lleva al screen MapTripDriver
+        if (reserveDetail?.tripRequest.state == 3) {
+          context.push('/passenger/0/reserve/mapTripPassenger', extra: {
+            'idReserve': idReserve
+          });
+        } else {
+          context.push('/passenger/0/reserve/detail', extra: {
+            'idReserve': idReserve,
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -104,13 +110,13 @@ class ReservesItem extends StatelessWidget {
                     _startTripHour(reserveDetail!.tripRequest.departureTime),
                     const SizedBox(height: 10),
                     
-                    if (tripType != 'historicalTrips') 
-                      _chatButton(),
+                    // if (tripType != 'historicalReservations') 
+                    //   _chatButton(),
 
                     const SizedBox(height: 6),
                     
                     if (tripType == 'futureReservations') 
-                      _cancelButton(),
+                      _cancelButton(context),
                       
                     const SizedBox(height: 10),
                   ],
@@ -238,7 +244,7 @@ class ReservesItem extends StatelessWidget {
     );
   }
 
-  Widget _cancelButton() {
+  Widget _cancelButton(BuildContext context) {
     return Container(
       width: 190,
       height: 40,
@@ -255,7 +261,17 @@ class ReservesItem extends StatelessWidget {
       ),
       child: ElevatedButton(
         onPressed: () {
-          // onPressed();
+          CustomDialog(
+            context: context,
+            title: 'Cancelar Reserva',
+            content: 'Estás por cancelar la reserva al viaje ${reserveDetail!.tripRequest.idTrip} ¿Querés confirmarlo?',
+            icon: Icons.check_circle_rounded,
+            onPressedSend: () {
+              context.read<ReservesBloc>().add(CancelReservation(idReserve: reserveDetail!.idReservation));
+            },
+            textSendBtn: 'Confirmar',
+            textCancelBtn: 'Cancelar',
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

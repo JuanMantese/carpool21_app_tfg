@@ -33,7 +33,20 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime ?? TimeOfDay.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: const Color(0xFF00A48B), // Color principal (verde)
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF00A48B), // Color del ícono y título
+              onPrimary: Colors.white, // Color del texto sobre el fondo verde
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
+    
     if (picked != null && picked != selectedTime) {
       setState(() {
         selectedTime = picked;

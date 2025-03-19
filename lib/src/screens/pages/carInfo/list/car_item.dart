@@ -14,7 +14,6 @@ class CarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Car Info Item: ${car.toJson()}');
     return GestureDetector(
       onTap: () {
         context.push('/car/list/info', extra: {

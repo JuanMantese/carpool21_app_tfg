@@ -1,37 +1,36 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
 class CustomButton extends StatelessWidget {
 
-  Function() onPressed;
-  String text;
-  Color color;
-  Color textColor;
+  final Function()? onPressed;
+  final String text;
+  final Color color;
+  final Color textColor;
   // IconData icon;
-  EdgeInsetsGeometry margin;
-  EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry padding;
+  final bool isEnabled;
 
-  CustomButton({
+  const CustomButton({
     super.key, 
     required this.text,
-    required this.onPressed,
+    required Function() onPressed,
     this.color = const Color(0xFF00A98F),
     this.textColor = Colors.white,
     // this.icon = Icons.visibility,
     this.margin = const EdgeInsets.all(0),
     this.padding = const EdgeInsets.all(0),
-  });
+    this.isEnabled = true
+  }) : onPressed = isEnabled ? onPressed : null;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
       child: ElevatedButton(
-        onPressed: () {
-          onPressed();
-        },
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: isEnabled ? color : const Color.fromARGB(255, 187, 187, 187),
           minimumSize: const Size(double.infinity, 60), // width and heigh
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),

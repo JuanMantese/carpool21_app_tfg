@@ -4,9 +4,9 @@ import 'package:carpool_21_app/src/screens/pages/carInfo/update/bloc/car_update_
 import 'package:carpool_21_app/src/screens/pages/carInfo/update/bloc/car_update_event.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/update/bloc/car_update_state.dart';
 import 'package:carpool_21_app/src/screens/pages/carInfo/update/car_update_content.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 
 class CarUpdatePage extends StatefulWidget {
@@ -62,15 +62,26 @@ class _CarUpdatePageState extends State<CarUpdatePage> {
             // Navigator.pop(context);
             context.pop();
 
-            Fluttertoast.showToast(msg: 'Actualizacion exitosa', toastLength: Toast.LENGTH_LONG); 
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                'Consulta la información de tu vehículo aquí',
+                customTitle: 'Actualización exitosa',
+                type: AlertType.success
+              );
+            });
           } 
 
           else if (carUpdateRes is ErrorData) {
             // Muestra un mensaje de Error
-            Fluttertoast.showToast(
-              msg: 'Error al actualizar el vehiculo: ${carUpdateRes.message}',
-              toastLength: Toast.LENGTH_LONG,
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                carUpdateRes.message,
+                customTitle: 'Error al actualizar el vehículo',
+                type: AlertType.error
+              );
+            });
           }
         },
         child: BlocBuilder<CarUpdateBloc, CarUpdateState>(

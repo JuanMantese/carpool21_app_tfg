@@ -126,6 +126,7 @@ List<BlocProvider> blocProviders = [
     context.read<SocketIOBloc>()
   )),
   BlocProvider<TripDetailBloc>(create: (context) => TripDetailBloc(
+    locator<AuthUseCases>(), 
     locator<GeolocationUseCases>(), 
     locator<DriverTripRequestsUseCases>(),
     locator<SocketUseCases>(),
@@ -175,9 +176,8 @@ List<BlocProvider> blocProviders = [
 
   // Cards Screens
   BlocProvider<CardRegisterBloc>(create: (context) => CardRegisterBloc(
-    // locator<AuthUseCases>(), 
+    locator<AuthUseCases>(), 
     locator<CardsUseCases>(), 
-    // locator<UserUseCases>()
   )),
 
   // Payments Screens

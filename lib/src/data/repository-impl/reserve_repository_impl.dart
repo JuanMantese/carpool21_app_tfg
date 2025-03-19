@@ -26,4 +26,9 @@ class ReserveRepositoryImpl implements ReserveRepository {
   Future<Resource<ReservesAll>> getMyAllReserves() {
     return reserveService.getMyReservesAll();
   }
+
+  @override
+  Future<Resource<ReserveDetail>> cancelReserve(int idReserve) {
+    return reserveService.cancelReserve(idReserve);
+  }
 }

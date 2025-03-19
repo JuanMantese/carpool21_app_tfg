@@ -1,6 +1,7 @@
 import 'package:carpool_21_app/src/domain/models/card_detail.dart';
 import 'package:carpool_21_app/src/domain/models/payment_method.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
+import 'package:carpool_21_app/src/screens/pages/card/register/card_register.dart';
 import 'package:carpool_21_app/src/screens/pages/payments/bloc/payment_method_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/payments/bloc/payment_method_event.dart';
 import 'package:carpool_21_app/src/screens/pages/payments/bloc/payment_method_state.dart';
@@ -9,10 +10,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentMethod extends StatefulWidget {
   final PaymentMethodModel selectedMethod;
+  final bool inDrawer;
 
   const PaymentMethod({
     super.key, 
-    required this.selectedMethod
+    required this.selectedMethod,
+    this.inDrawer = false
   });
 
   @override
@@ -38,8 +41,10 @@ class _PaymentMethodState extends State<PaymentMethod> {
     if (_isUpdated) return;
 
     final List<Map<String, dynamic>> tempMethods = [
-      {"key": "CASH", "name": "Efectivo", "image": 'lib/assets/img/cash-money-icon.png', "cardNumber": "Efectivo", "cardBrand": "Efectivo"},
-      {"key": "OtherCard", "name": "Tarjeta Debito/Credito", "image": 'lib/assets/img/debit-credit-card-logo.png', "cardNumber": "Tarjeta Debito/Credito", "cardBrand": "OtherCard"},
+      if (!widget.inDrawer)
+        {"key": "CASH", "name": "Efectivo", "image": 'lib/assets/img/cash-money-icon.png', "cardNumber": "Efectivo", "cardBrand": "Efectivo"},
+      if (!widget.inDrawer)
+        {"key": "OtherCard", "name": "Tarjeta Debito/Credito", "image": 'lib/assets/img/debit-credit-card-logo.png', "cardNumber": "Tarjeta Debito/Credito", "cardBrand": "OtherCard"},
       // {"key": "MercadoPago", "name": "Mercado Pago", "image": 'lib/assets/img/card-MercadoPago-logo.png', "cardNumber": ""},
       // {"key": "2", "name": "4000 **** **** 0007", "image": 'lib/assets/img/card-Visa-logo.png', "cardNumber": "4000 **** **** 0007"},
       // {"key": "3", "name": "5100 **** **** 0006", "image": 'lib/assets/img/card-Mastercard-logo.png', "cardNumber": "5100 **** **** 0006"},
@@ -83,7 +88,6 @@ class _PaymentMethodState extends State<PaymentMethod> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     print('Payments ---');
@@ -113,9 +117,12 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      "Opciones de pago",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    Text(
+                      widget.inDrawer ? "Métodos de pago registrados" : "Opciones de pago",
+                      style: const TextStyle(
+                        fontSize: 20, 
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.close, size: 28),
@@ -171,14 +178,24 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 },
               ),
 
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  "Agregar método de pago +",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              if (widget.inDrawer)
+                TextButton(
+                  onPressed: () {
+                    RegisterCardDialog(
+                      context: context,
+                      onReserveSeat: false,
+                    );
+                  },
+                  child: const Text(
+                    "Agregar método de pago +",
+                    style: TextStyle(
+                      fontSize: 16, 
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF00A98F)
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
             ],
           ),
         );

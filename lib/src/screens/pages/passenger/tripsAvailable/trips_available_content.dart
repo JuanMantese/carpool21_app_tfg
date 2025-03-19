@@ -2,6 +2,7 @@ import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_event.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/bloc/trips_available_state.dart';
+import 'package:carpool_21_app/src/screens/widgets/empty_state_card.dart';
 import 'package:carpool_21_app/src/screens/widgets/floating_message.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripsAvailable/trips_available_item.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
@@ -13,19 +14,21 @@ import 'package:go_router/go_router.dart';
 class TripsAvailableContent extends StatelessWidget {
 
   final TripsAvailableState state;
-  final List<TripDetail> passengerRequests;
+  // final List<TripDetail> passengerRequests;
   final List<TripDetail> filteredRequests;
   final TextEditingController searchController;
   final Function(String) onSearch;
   final VoidCallback onShowAdvancedOptions;
+  final ValueChanged<bool> onFirstLoadChanged; // Callback para actualizar _isFirstLoad
 
   const TripsAvailableContent(this.state, {
     super.key,
-    required this.passengerRequests,
+    // required this.passengerRequests,
     required this.filteredRequests,
     required this.searchController,
     required this.onSearch,
     required this.onShowAdvancedOptions,
+    required this.onFirstLoadChanged, 
   });
 
   @override
@@ -38,7 +41,6 @@ class TripsAvailableContent extends StatelessWidget {
           CustomIconBack(
             margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top + 15, left: 30),
             onPressed: () {
-              // Navigator.pop(context);
               context.pop();
             },
           ),
@@ -65,17 +67,34 @@ class TripsAvailableContent extends StatelessWidget {
             child: Icon(Icons.add_rounded, color: Colors.teal),
           ),
 
-          // Permite listar los viajes disponibles - vienen dentro de una Lista
-          Container(
-            margin: const EdgeInsets.only(top: 170, bottom: 40),
-            padding: const EdgeInsets.only(right: 20, left: 20),
-            child: ListView.builder(
-              itemCount: filteredRequests.length,
-              itemBuilder: (context, index) {
-                return TripsAvailableItem(state, filteredRequests[index]);
-              },
-            )
-          ),
+          if (filteredRequests.isEmpty)
+            Container(
+              margin: const EdgeInsets.only(top: 250, bottom: 50),
+              padding: const EdgeInsets.only(right: 2, left: 2),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 0, // Ajustando la altura - Quitando padding y margins
+                width: double.infinity,
+                child: const Center(
+                  child: EmptyStateCard(
+                    message: 'No tenemos viajes disponibles que coincidan con tu búsqueda. Intentá con otro destino!',
+                    image: "lib/assets/img/no-available-trips.png",
+                  ),
+                ),
+              ),
+            ),
+
+          if (filteredRequests.isNotEmpty)
+            // Permite listar los viajes disponibles - vienen dentro de una Lista
+            Container(
+              margin: const EdgeInsets.only(top: 170, bottom: 40),
+              padding: const EdgeInsets.only(right: 20, left: 20),
+              child: ListView.builder(
+                itemCount: filteredRequests.length,
+                itemBuilder: (context, index) {
+                  return TripsAvailableItem(state, filteredRequests[index]);
+                },
+              )
+            ),
 
           SearchWidget(
             searchController: searchController,
@@ -87,9 +106,6 @@ class TripsAvailableContent extends StatelessWidget {
             right: 20,
             child: IconButton(
               icon: const Icon(Icons.filter_alt_rounded, color: Colors.teal),
-              // onPressed: () {
-              //   _showAdvancedOptionsModal(context);
-              // },
               onPressed: onShowAdvancedOptions,
             ),
           ),
@@ -98,6 +114,7 @@ class TripsAvailableContent extends StatelessWidget {
             FloatingMessage(
               displayDuration: const Duration(seconds: 5),
               onUpdate: () {
+                onFirstLoadChanged(true);
                 context.read<TripsAvailableBloc>().add(GetTripsAvailable());
               },
             ),

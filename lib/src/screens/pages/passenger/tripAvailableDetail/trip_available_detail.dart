@@ -7,9 +7,9 @@ import 'package:carpool_21_app/src/screens/pages/passenger/tripAvailableDetail/b
 import 'package:carpool_21_app/src/screens/pages/passenger/tripAvailableDetail/bloc/trip_available_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripAvailableDetail/bloc/trip_available_detail_state.dart';
 import 'package:carpool_21_app/src/screens/pages/passenger/tripAvailableDetail/trip_svailable_detail_content.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -128,7 +128,6 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
       body: BlocListener<TripAvailableDetailBloc, TripAvailableDetailState>(
         listener: (context, state) {
           final responseReserveRes = state.responseReserve;
-          print(state.responseReserve);
           print('TripAvailableDetail');
           print(responseReserveRes);
           
@@ -139,6 +138,7 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
             _setLoading(false);
           }
 
+          // Success Status
           if (responseReserveRes is Success) { 
             print('Entro en responseReserveRes');
 
@@ -160,12 +160,23 @@ class _TripAvailableDetailPageState extends State<TripAvailableDetailPage> {
               'idReserve': idReserve
             });
 
-            Fluttertoast.showToast(msg: 'Reserva realizada', toastLength: Toast.LENGTH_LONG);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                'Podes consultar los detalles de tu reserva aquí',
+                customTitle: 'Reserva realizada exitosamente',
+                type: AlertType.success
+              );
+            });
+          } 
 
-          } else if (responseReserveRes is ErrorData) {
-            Fluttertoast.showToast(
-              msg: 'Error al realizar la reserva: ${responseReserveRes.message}',
-              toastLength: Toast.LENGTH_LONG,
+          // Error Status
+          else if (responseReserveRes is ErrorData) {
+            showOverlayMessage(
+              context, 
+              responseReserveRes.message,
+              customTitle: 'Error al realizar la reserva',
+              type: AlertType.error
             );
           }
         },

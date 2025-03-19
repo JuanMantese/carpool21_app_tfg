@@ -206,7 +206,7 @@ class MapTripPassengerContent extends StatelessWidget {
             child: Center(
               child: state.timeAndDistance != null
                 ? Text(
-                    '${state.timeAndDistance?.duration.text}',
+                    '${state.timeAndDistance?.distance.text}',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 14,
@@ -252,7 +252,7 @@ class MapTripPassengerContent extends StatelessWidget {
           Center(
             child: state.timeAndDistance != null
               ? Text(
-                  '${state.timeAndDistance?.distance.text}',
+                  '${state.timeAndDistance?.duration.text}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 14,
@@ -307,8 +307,7 @@ class MapTripPassengerContent extends StatelessWidget {
             style: TextStyle(fontSize: 15),
           ),
           subtitle: Text(
-            // reserveDetail.tripRequest.destinationText,
-            'Efectivo',
+            reserveDetail.payment != null ? reserveDetail.payment!.paymentMethod : 'Efectivo',
             style: const TextStyle(fontSize: 13),
           ),
           leading: const Icon(
@@ -343,8 +342,8 @@ class MapTripPassengerContent extends StatelessWidget {
     return OutlinedButton(
       onPressed: !state.isPaid
         ? () {
-            // Aquí se procesa la cancelación de calificación
-            print("Calificación cancelada.");
+            // Aqui debo ejecutar el pago y cambiar el estado de isPaid
+            print("Aqui debo ejecutar el pago y cambiar el estado de isPaid");
             Navigator.of(context).pop();
           }
         : null,

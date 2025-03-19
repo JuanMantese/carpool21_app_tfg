@@ -286,16 +286,31 @@ class MapTripDriverContent extends StatelessWidget {
   Widget _buildPassengersList(List<Reservations> reservations) {  
     // Permite listar la informacion que viene dentro de una Lista
     return Column(
-      children: reservations.map((reserve) {
-        return _passengerItem(
-          passengerDetail: reserve.passenger!,
-        );
-      }).toList()
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Pasajeros',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontStyle: FontStyle.italic,
+            color: Color(0xFF00A48B),
+          ),
+        ),
+        const SizedBox(height: 10),
+          Column(
+          children: reservations.map((reserve) {
+            return _passengerItem(
+              reserveDetail: reserve,
+            );
+          }).toList()
+        )
+      ],
     );
   }
 
   Widget _passengerItem({
-    required Passenger passengerDetail,
+    required reserveDetail,
   }) {
     return Card(
       color: const Color.fromRGBO(0, 164, 139, 0.09),
@@ -310,11 +325,30 @@ class MapTripDriverContent extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                '${passengerDetail.name} ${passengerDetail.lastName}',
+                '${reserveDetail.passenger.name} ${reserveDetail.passenger.lastName}',
                 style: const TextStyle(
                   fontSize: 16,
                   color: Color(0xFF006D59),
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: reserveDetail.isPaid 
+                  ? const Color.fromARGB(41, 0, 169, 144) 
+                  : const Color.fromARGB(34, 206, 79, 0),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                reserveDetail.isPaid ? 'Pagado' : 'Pendiente',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: reserveDetail.isPaid 
+                    ? const Color.fromARGB(255, 0, 145, 123)
+                    : const Color.fromARGB(255, 250, 96, 0),
                 ),
               ),
             ),
@@ -341,7 +375,7 @@ class MapTripDriverContent extends StatelessWidget {
 
   Widget _actionButton(BuildContext context) {
     return OutlinedButton(
-      onPressed: !state.isArrived
+      onPressed: state.isArrived
         ? () {
             context.read<MapTripDriverBloc>().add(ChangeTripStatus(idTrip: tripDetail.idTrip));
           }

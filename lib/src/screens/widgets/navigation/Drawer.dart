@@ -1,8 +1,15 @@
 // ignore_for_file: avoid_print
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
 import 'package:carpool_21_app/blocSocketIO/socket_io_event.dart';
+import 'package:carpool_21_app/src/domain/models/car_info.dart';
+import 'package:carpool_21_app/src/domain/models/payment_method.dart';
+import 'package:carpool_21_app/src/domain/models/reserve_detail.dart';
 import 'package:carpool_21_app/src/domain/models/role.dart';
+import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/models/user.dart';
+import 'package:carpool_21_app/src/screens/pages/contact/contact.dart';
+import 'package:carpool_21_app/src/screens/pages/onboarding/onboarding.dart';
+import 'package:carpool_21_app/src/screens/pages/payments/payment_method.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationBloc.dart';
 import 'package:carpool_21_app/src/screens/widgets/navigation/bloc/navigationEvent.dart';
@@ -23,6 +30,134 @@ class CustomDrawer extends StatelessWidget {
     super.key
   });
 
+
+  // DATOS DE TESTING PARA PROBAR FUNCIONALIDADES - A ELIMINAR
+    static TripDetail tripExample = TripDetail(
+        idTrip: 1,
+        idDriver: 1001,
+        driver: Driver(
+          name: "Juan",
+          lastName: "Perez",
+          phone: "1234567890",
+          photo: "url_to_photo",
+        ),
+        pickupNeighborhood: "Centro",
+        pickupText: "Calle Falsa 123",
+        pickupLat: -31.4201,
+        pickupLng: -64.1888,
+        destinationNeighborhood: "Nueva Córdoba",
+        destinationText: "Avenida Juan B. Justo 456",
+        destinationLat: -31.4133,
+        destinationLng: -64.1818,
+        availableSeats: 3,
+        departureTime: "2025-01-25T10:00:00",
+        distance: 10.5,
+        timeDifference: 15,
+        compensation: 50.0,
+        observations: "Sin observaciones",
+        state: 1,
+        vehicle: CarInfo(
+          color: 'red',
+          brand: "Toyota",
+          model: "Corolla",
+          year: 2020,
+          patent: "ABC123",
+        ),
+        reservations: [
+          Reservations(
+            idReservation: 1,
+            isPaid: true,
+            passenger: Passenger(
+              idUser: 101,
+              name: "Carlos",
+              lastName: "Gomez",
+              phone: "0987654321",
+              photo: "url_to_photo",
+            ),
+          ),
+          Reservations(
+            idReservation: 2,
+            isPaid: false,
+            passenger: Passenger(
+              idUser: 102,
+              name: "Ana",
+              lastName: "Lopez",
+              phone: "1122334455",
+              photo: "url_to_photo",
+            ),
+          ),
+        ],
+      );
+
+      static ReserveDetail reserveExample = ReserveDetail(
+        idReservation: 1,
+        isPaid: true,
+        tripRequest: TripDetail(
+          idTrip: 1,
+          idDriver: 1001,
+          driver: Driver(
+            name: "Juan",
+            lastName: "Perez",
+            phone: "1234567890",
+            photo: "url_to_photo",
+          ),
+          pickupNeighborhood: "Centro",
+          pickupText: "Calle Falsa 123",
+          pickupLat: -31.4201,
+          pickupLng: -64.1888,
+          destinationNeighborhood: "Nueva Córdoba",
+          destinationText: "Avenida Juan B. Justo 456",
+          destinationLat: -31.4133,
+          destinationLng: -64.1818,
+          availableSeats: 3,
+          departureTime: "2025-01-25T10:00:00",
+          distance: 10.5,
+          timeDifference: 15,
+          compensation: 50.0,
+          observations: "Sin observaciones",
+          state: 1,
+          vehicle: CarInfo(
+            color: 'red',
+            brand: "Toyota",
+            model: "Corolla",
+            year: 2020,
+            patent: "ABC123",
+          ),
+          reservations: [
+            Reservations(
+              idReservation: 1,
+              isPaid: true,
+              passenger: Passenger(
+                idUser: 101,
+                name: "Carlos",
+                lastName: "Gomez",
+                phone: "0987654321",
+                photo: "url_to_photo",
+              ),
+            ),
+            Reservations(
+              idReservation: 2,
+              isPaid: false,
+              passenger: Passenger(
+                idUser: 102,
+                name: "Ana",
+                lastName: "Lopez",
+                phone: "1122334455",
+                photo: "url_to_photo",
+              ),
+            ),
+          ],
+        ),
+        driver: Driver(
+          name: "Juan",
+          lastName: "Perez",
+          phone: "1234567890",
+          photo: "url_to_photo",
+        ),
+      );
+
+
+
   @override
   Widget build(BuildContext context) {
     // final String currentRole = currentUser.roles!.isNotEmpty ? currentUser.roles!.first.idRole : 'unknown';
@@ -31,6 +166,7 @@ class CustomDrawer extends StatelessWidget {
     return BlocBuilder<NavigationBloc, NavigationState>(
       builder: (context, state) {
         return Drawer(
+          elevation: 0,
           width: MediaQuery.of(context).size.width * 0.9, // 80% of screen width,
           child: Column(
             children: [
@@ -77,7 +213,8 @@ class CustomDrawer extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           context.read<NavigationBloc>().add(ChangeUserRol('PASSENGER'));
-                          // Navigator.pushNamedAndRemoveUntil(context, '/passenger/home', (route) => false);
+                          
+                          // Redirigiendo a la Home del Passenger
                           context.go('/passenger/0');
                           globals.currentRole = 'passenger';
                         },
@@ -124,7 +261,8 @@ class CustomDrawer extends StatelessWidget {
                             );
                           } else {
                             context.read<NavigationBloc>().add(ChangeUserRol('DRIVER'));
-                            // Navigator.pushNamedAndRemoveUntil(context, '/driver/home', (route) => false);
+
+                            // Redirigiendo a la Home del Driver
                             context.go('/driver/0');
                             globals.currentRole = 'driver';
                           }
@@ -219,8 +357,6 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.account_circle_outlined, color: Color(0xFF006D59)),
           title: const Text('Perfil'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/profile');
             context.pop();
             context.push('/profile');
           },
@@ -230,15 +366,21 @@ class CustomDrawer extends StatelessWidget {
           title: const Text('Métodos de pago'),
           onTap: () {
             context.pop();
-            // context.push('/metodos-pago');
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (context) => PaymentMethod(
+                selectedMethod: PaymentMethodModel.defaultMethod(), // Pasamos el método actual
+                inDrawer: true,
+              ),
+            );
           },
         ),
         ListTile(
           leading: const Icon(Icons.directions_car_rounded, color: Color(0xFF006D59)),
           title: const Text('Registrar Vehículo'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/car/register');
             context.pop();
             context.push('/car/list/register', extra: {
               'originPage': '/passenger/0',
@@ -249,22 +391,76 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.perm_phone_msg, color: Color(0xFF006D59)),
           title: const Text('Contacto'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/contact');
-            context.pop();
-            context.push('/contact');
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const ContactPage(),
+            );
           },
         ),
         ListTile(
           leading: const Icon(Icons.article, color: Color(0xFF006D59)),
           title: const Text('Tips'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/tips');
-            context.pop();
-            context.push('/tips');
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const Onboarding(),
+            );
           },
         ),
+
+        // Opciones de TESTING a eliminar ----------------------------------
+        // ListTile(
+        //   leading: const Icon(Icons.article, color: Color(0xFF006D59)),
+        //   title: const Text('CardRegister Modal'),
+        //   onTap: () {
+        //     RegisterCardDialog(
+        //       context: context,
+        //     );
+        //   },
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.article, color: Color(0xFF006D59)),
+        //   title: const Text('DriverRaiting'),
+        //   onTap: () {
+        //     DialogDriverRatingTrip(
+        //       context: context,
+        //       tripDetail: tripExample,
+        //     );
+        //   },
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.article, color: Color(0xFF006D59)),
+        //   title: const Text('PassengerRating'),
+        //   onTap: () {
+        //     DialogPassengerRatingTrip(
+        //       context: context,
+        //       tripReservationDetail: reserveExample,
+        //     );
+        //   },
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.article, color: Color(0xFF006D59)),
+        //   title: const Text('MapTrip Passenger'),
+        //   onTap: () {
+        //     // Testeando la nueva pantalla de viaje en vivo
+        //     context.push('/passenger/0/reserve/mapTripPassenger', extra: {
+        //       'idReserve': 111
+        //     });
+        //   },
+        // ),
+        // ListTile(
+        //   leading: const Icon(Icons.article, color: Color(0xFF006D59)),
+        //   title: const Text('MapTrip Driver'),
+        //   onTap: () {
+        //     // Testeando la nueva pantalla de viaje en vivo
+        //     context.push('/driver/0/mapTripDriver', extra: {
+        //       'idTrip': 134
+        //     });
+        //   },
+        // ),
+
         // ListTile(
         //   title: const Text('Maps'),
         //   onTap: () {
@@ -280,13 +476,7 @@ class CustomDrawer extends StatelessWidget {
         //     );
         //   },
         // ),
-        // ListTile(
-        //   title: const Text('Trip Detail'),
-        //   onTap: () {
-        //     Navigator.pop(context);
-        //     Navigator.pushNamed(context, '/driver/trip/detail');
-        //   },
-        // ),
+  
         ListTile(
           leading: const Icon(Icons.power_settings_new, color: Color(0xFF006D59)),
           title: const Text('Cerrar Sesion'),
@@ -318,8 +508,6 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.account_circle_outlined, color: Color(0xFF006D59)),
           title: const Text('Perfil'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/profile');
             context.pop();
             context.push('/profile');
           },
@@ -328,8 +516,6 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.directions_car_rounded, color: Color(0xFF006D59)),
           title: const Text('Vehículos'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/car/list');
             context.pop();
             context.push('/car/list');
           },
@@ -338,20 +524,22 @@ class CustomDrawer extends StatelessWidget {
           leading: const Icon(Icons.perm_phone_msg, color: Color(0xFF006D59)),
           title: const Text('Contacto'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/contact');
-            context.pop();
-            // context.push('/contact');
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const ContactPage(),
+            );
           },
         ),
         ListTile(
           leading: const Icon(Icons.article, color: Color(0xFF006D59)),
           title: const Text('Tips'),
           onTap: () {
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/tips');
-            context.pop();
-            context.push('/tips');
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => const Onboarding(),
+            );
           },
         ),
         // ListTile(
@@ -361,15 +549,13 @@ class CustomDrawer extends StatelessWidget {
         //     Navigator.pushNamed(context, '/driver/finder');
         //   },
         // ),
-        ListTile(
-          title: const Text('MapLocation'),
-          onTap: () {
-            context.pop();
-            context.push('/driver/0/location');
-            // Navigator.pop(context);
-            // Navigator.pushNamed(context, '/driver/location');
-          },
-        ),
+        // ListTile(
+        //   title: const Text('MapLocation'),
+        //   onTap: () {
+        //     context.pop();
+        //     context.push('/driver/0/location');
+        //   },
+        // ),
         // ListTile(
         //   title: const Text('Modal'),
         //   onTap: () {
