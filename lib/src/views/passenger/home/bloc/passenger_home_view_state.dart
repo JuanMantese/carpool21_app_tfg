@@ -20,6 +20,7 @@ class PassengerHomeViewState extends Equatable {
   final UsersService? userService;
   final TripDetail? currentReserve;
   final ReservesAll? reservesAll;
+  final bool startTrip;
 
   const PassengerHomeViewState({
     this.responseStatus = PassengerHomeViewStatus.initial,
@@ -29,7 +30,8 @@ class PassengerHomeViewState extends Equatable {
     this.currentUser,
     this.userService,
     this.currentReserve,
-    this.reservesAll
+    this.reservesAll,
+    this.startTrip = false
   });
 
   PassengerHomeViewState copyWith({
@@ -41,6 +43,7 @@ class PassengerHomeViewState extends Equatable {
     UsersService? userService,
     TripDetail? currentReserve,
     ReservesAll? reservesAll,
+    bool? startTrip
   }) {
     return PassengerHomeViewState(
       responseStatus: responseStatus ?? this.responseStatus,
@@ -50,7 +53,8 @@ class PassengerHomeViewState extends Equatable {
       currentUser: currentUser ?? this.currentUser,
       userService: userService ?? this.userService,
       currentReserve: currentReserve ?? this.currentReserve,
-      reservesAll: reservesAll ?? this.reservesAll
+      reservesAll: reservesAll ?? this.reservesAll,
+      startTrip: startTrip ?? this.startTrip
     );
   }
   
@@ -63,7 +67,8 @@ class PassengerHomeViewState extends Equatable {
     currentRole, 
     userService, 
     currentReserve, 
-    reservesAll
+    reservesAll,
+    startTrip
   ];
 
 }

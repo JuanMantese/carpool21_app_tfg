@@ -1,5 +1,3 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 abstract class MapTripPassengerEvent {}
 
 class GetMapReserveDetail extends MapTripPassengerEvent {
@@ -15,16 +13,15 @@ class MapTripPassangerInitMap extends MapTripPassengerEvent {}
 
 // Permite cambiar la posicion de la camara del mapa para colocarla sobre la ruta
 class ChangeMapCameraPosition extends MapTripPassengerEvent {
-  final LatLng pickUpLatLng;
-  final LatLng destinationLatLng;
+  final double lat;
+  final double lng;
 
   ChangeMapCameraPosition({
-    required this.pickUpLatLng,
-    required this.destinationLatLng,
+    required this.lat,
+    required this.lng,
   });
 }
 
-// TESTEANDO ESTA FORMA DE COLOCAR LOS MARKERS
 class AddMarkerPickup extends MapTripPassengerEvent {
   final double lat;
   final double lng;
@@ -53,9 +50,6 @@ class AddMarkerDriver extends MapTripPassengerEvent {
     required this.lng,
   });
 }
-// FINALIZA EL TESTONG ------------------
-
-
 
 // Agregando la ruta al mapa
 class AddPolyline extends MapTripPassengerEvent {
@@ -79,8 +73,12 @@ class GetTimeAndDistanceValues extends MapTripPassengerEvent {
   });
 }
 
+// Emitimos la finalizacion del viaje
+class TripFinishedEvent extends MapTripPassengerEvent {}
+
 // Reseteo los valores del State al salir de la pantalla
 class ResetState extends MapTripPassengerEvent {}
 
 // Socket IO
 class ListenDriverPositionSocketIO extends MapTripPassengerEvent {}
+class ListenUpdateStatusTripSocketIO extends MapTripPassengerEvent {}

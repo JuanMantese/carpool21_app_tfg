@@ -56,70 +56,25 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
 
       if (responseReserveDetail is Success<ReserveDetail>) {
         print('Response Success');
-        final data = responseReserveDetail.data;
-        print(data.tripRequest.toJson());
+        ReserveDetail data = responseReserveDetail.data;
+
         emit(
           state.copyWith(
-            isPaid: data.isPaid ,
+            isPaid: data.isPaid,
+            pickUpLatLng: LatLng(data.tripRequest.pickupLat, data.tripRequest.pickupLng),
             destinationLatLng: LatLng(data.tripRequest.destinationLat, data.tripRequest.destinationLng),
           ),
         );
+        
+        // Inicializando el Mapa
+        add(MapTripPassangerInitMap());
+
+        // Ejecutamos el evento para escuchar los cambios por Socket.IO
+        add(ListenDriverPositionSocketIO());
+        add(ListenUpdateStatusTripSocketIO());
       }
     });
 
-
-    // ----------------------
-    // FORMA CORRECTA EN LA QUE FUNCIONA SIEMPRE - NO ELIMINAR HASTA QUE EL TESTING DE LO OTRO HAYA UFNCIONADO
-    // ----------------------
-    //  on<MapTripPassangerInitMap>((event, emit) async {
-    //   print('InitializeMap -------------------------------------');
-    //   print('Origin: ${state.pickUpLatLng} - Destination: ${state.destinationLatLng}');
-
-    //   // Inicializo el controlador del mapa cada vez que ingreso a la pantalla con Mapa
-    //   Completer<GoogleMapController> initializeController = Completer<GoogleMapController>();
-      
-    //   emit(
-    //     state.copyWith(
-    //       controller: initializeController,
-    //     )
-    //   );
-
-    //   // Defino los Markers aca para que primero se inicialicen las posiciones
-    //   // Trayendo las imagenes de los marker que coloco en el mapa al trazar la ruta
-    //   BitmapDescriptor pickUpMarkerImg = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-small.png');
-    //   BitmapDescriptor destinationMarkerImg = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-green-small.png');
-
-    //   // Actualizando estado de los marcadores
-    //   Marker markerPickUp = geolocationUseCases.getMarker.run(
-    //     'originLocation',
-    //     state.pickUpLatLng!.latitude,
-    //     state.pickUpLatLng!.longitude,
-    //     'Lugar de Origen',
-    //     '',
-    //     pickUpMarkerImg
-    //   );
-
-    //   Marker markerDestination = geolocationUseCases.getMarker.run(
-    //     'destinationLocation',
-    //     state.destinationLatLng!.latitude,
-    //     state.destinationLatLng!.longitude,
-    //     'Lugar de Destino',
-    //     '',
-    //     destinationMarkerImg
-    //   );
-
-    //   emit(
-    //     state.copyWith(
-    //       markers: {
-    //         markerPickUp.markerId: markerPickUp,
-    //         markerDestination.markerId: markerDestination,
-    //       }
-    //     )
-    //   );
-
-    //   // Agregando la Ruta
-    //   add(AddPolyline());
-    // });
 
     on<MapTripPassangerInitMap>((event, emit) async {
       print('InitializeMap -------------------------------------');
@@ -133,34 +88,26 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
           controller: initializeController,
         )
       );
-    });
 
-    on<AddMarkerPickup>((event, emit) async {
+      // Defino los Markers aca para que primero se inicialicen las posiciones
+      // Trayendo las imagenes de los marker que coloco en el mapa al trazar la ruta
       BitmapDescriptor pickUpMarkerImg = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-small.png');
+      BitmapDescriptor destinationMarkerImg = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-green-small.png');
 
+      // Actualizando estado de los marcadores
       Marker markerPickUp = geolocationUseCases.getMarker.run(
         'originLocation',
-        event.lat,
-        event.lng,
+        state.pickUpLatLng!.latitude,
+        state.pickUpLatLng!.longitude,
         'Lugar de Origen',
         '',
         pickUpMarkerImg
       );
 
-      emit(
-        state.copyWith(
-          markers: Map.of(state.markers)..[markerPickUp.markerId] = markerPickUp
-        )
-      );
-    });
-
-    on<AddMarkerDestination>((event, emit) async {
-      BitmapDescriptor destinationMarkerImg = await geolocationUseCases.createMarker.run('lib/assets/img/map-marker-green-small.png');
-     
       Marker markerDestination = geolocationUseCases.getMarker.run(
         'destinationLocation',
-        event.lat,
-        event.lng,
+        state.destinationLatLng!.latitude,
+        state.destinationLatLng!.longitude,
         'Lugar de Destino',
         '',
         destinationMarkerImg
@@ -168,9 +115,15 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
 
       emit(
         state.copyWith(
-          markers: Map.of(state.markers)..[markerDestination.markerId] = markerDestination
+          markers: {
+            markerPickUp.markerId: markerPickUp,
+            markerDestination.markerId: markerDestination,
+          }
         )
       );
+
+      // Agregando la Ruta
+      // add(AddPolyline());
     });
 
     on<AddMarkerDriver>((event, emit) async {
@@ -193,29 +146,29 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
         )
       );
     });
-    // FIN DEL TESTING
-
-
 
 
     // Ajustando la posicion de la camara en el mapa segun la ruta elegida
     on<ChangeMapCameraPosition>((event, emit) async {
       print('Entramos a ChangeMapCameraPosition ------------------------------------');
-      print(event.pickUpLatLng);
-      print(event.destinationLatLng);
+      print('LAT: ${event.lat} y LNG: ${event.lng}');
 
       try {
         GoogleMapController googleMapController = await state.controller!.future;
-
-        // Calcula los límites usando pickUpLatLng y destinationLatLng
-        LatLngBounds bounds = calculateBounds(event.pickUpLatLng, event.destinationLatLng);
-
-        await googleMapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+        
+        await googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(event.lat, event.lng),
+            zoom: 18,
+            bearing: 0
+          )
+        ));
         print('Posicionamiento completado');
       } catch (e) {
         print('ERROR EN ChangeMapCameraPosition: $e');
       }
-    });  
+    });
+
 
     // Agregando la ruta al mapa
     on<AddPolyline>((event, emit) async {
@@ -274,6 +227,15 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
       }
     });
 
+    // Emitimos la finalizacion del viaje
+    on<TripFinishedEvent>((event, emit) {
+      emit(
+        state.copyWith(
+          tripFinished: true
+        )
+      );
+    });
+
     // Reseteo los valores del State al salir de pantalla
     on<ResetState>((event, emit) async {
       print('reseteo');
@@ -302,23 +264,27 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
           print('Escuchando');
           
           socketIOBloc.state.socket?.on('new_driver_position_trip/${authResponse.user?.idUser}', (data) {
+            print('Escuchando la ubicación del driver >>>>>>>>>>>');
+            print(data);
+
             // Actualizamos el marcador segun la ubicacion del Driver
             add(AddMarkerDriver(
               lat: data['lat'] as double, 
               lng: data['lng'] as double
             ));
 
-            // Estos 2 eventos se deberian ejecutar siempre para mantener la ruta y el tiempo real del viaje actualizado
-            // Para reducir consumos de la API de GoogleMaps, utilizo esta condición para ejecutar el AddPolyline solo una vez
-            // if (!state.isRouteDrawed) {
-              // Actualizamos la ruta segun la posicion del driver si aun no ha sido trazada
-              add(AddPolyline(
-                driverLat: data['lat'] as double, 
-                driverLng: data['lng'] as double
-              ));
-            // }
+            // Actualizamos la ruta segun la posicion del driver si aun no ha sido trazada
+            add(AddPolyline(
+              driverLat: data['lat'] as double, 
+              driverLng: data['lng'] as double
+            ));
 
-            // Voy a utilizar un temporizador para ejecutar los Eventos cada 1 minuto
+            // Modificando la posicion de la camara en el mapa
+            add(ChangeMapCameraPosition(
+              lat: data['lat'] as double, 
+              lng: data['lng'] as double
+            ));
+
             // Actualizando el tiempo de llegada a destino
             add(GetTimeAndDistanceValues(
               driverLat: data['lat'] as double, 
@@ -330,9 +296,32 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
         print('******************* Passenger Trip Available Detail Emit Socket - AuthResponse es Null *******************');
       }
     });
+
+    // Escuchando la finalización del viaje
+    on<ListenUpdateStatusTripSocketIO>((event, emit) async {
+      print('Escuchando la finalización del viaje >>>>>>>>>>>>>>>>>>>>>');
+
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
+
+      if (authResponse != null && authResponse.user != null) {
+        print('Datos del usuario obtenidos - Map Trip Passenger: ${authResponse.user?.idUser}');
+
+        if(socketIOBloc.state.socket != null) {
+          print('Escuchando ListeUpdateStatusTripSocketIO');
+          
+          socketIOBloc.state.socket?.on('trip_status_update/${authResponse.user?.idUser}', (data) {
+            if (state.tripFinished != true) {
+              add(TripFinishedEvent());
+            }
+          });
+        }
+      } else {
+        print('******************* Passenger Trip Listen Update Trip Socket - AuthResponse es Null *******************');
+      }
+    });
   }
 
-   // Funcion para calcular los limites de la ruta, y poder realizar el movimiento de la camara
+  // Funcion para calcular los limites de la ruta, y poder realizar el movimiento de la camara
   LatLngBounds calculateBounds(LatLng pickUp, LatLng destination) {
     LatLngBounds bounds;
 

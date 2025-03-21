@@ -127,13 +127,13 @@ class _Page extends StatelessWidget {
       {
         "title": "Como pasajero podes...",
         "text":
-            "Buscar tu próximo viaje hacia o desde una de las sedes de la Universidad Siglo 21. \nReservar con anticipación y confirmar tu viaje de manera segura. Chatea con el conductor",
+            "Buscar tu próximo viaje hacia o desde una de las sedes de la Universidad Siglo 21. \nReservar con anticipación y confirmar tu viaje de manera segura.",
         "image": "lib/assets/img/logo-carpool21.png"
       },
       {
         "title": "¿Cómo ser conductor?",
         "text":
-            "Primero deberás registras tú vehículo en el sistema. \nSeleccionas el cual es tu lugar de Origen y Destino. Configura tu viaje y comenzá la aventura. \nA medida que vayas recibiendo reservas, podes chatear con los distintos pasajeros.",
+            "Primero deberás registras tú vehículo en el sistema. \nSeleccionas el cual es tu lugar de Origen y Destino. Configura tu viaje y comenzá la aventura.",
         "image": "lib/assets/img/logo-carpool21.png"
       },
       {

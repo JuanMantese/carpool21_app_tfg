@@ -9,6 +9,7 @@ class TripDetailState extends Equatable {
   final Resource? responseGetTripDetail;
   final Resource? responseStartTrip;
   final bool showNewReservesOnTrip;
+  final int? idTrip;
   
   final Completer<GoogleMapController>? controller;
   final LatLng? pickUpLatLng;
@@ -23,6 +24,7 @@ class TripDetailState extends Equatable {
     this.responseGetTripDetail,
     this.responseStartTrip,
     this.showNewReservesOnTrip = false,
+    this.idTrip,
     this.controller,
     this.pickUpLatLng,
     this.destinationLatLng,
@@ -37,6 +39,7 @@ class TripDetailState extends Equatable {
     Resource? responseGetTripDetail,
     Resource? responseStartTrip,
     bool? showNewReservesOnTrip,
+    int? idTrip,
 
     Completer<GoogleMapController>? controller,
     LatLng? pickUpLatLng,
@@ -51,6 +54,7 @@ class TripDetailState extends Equatable {
       responseGetTripDetail: responseGetTripDetail ?? this.responseGetTripDetail,
       responseStartTrip: responseStartTrip ?? this.responseStartTrip,
       showNewReservesOnTrip: showNewReservesOnTrip ?? this.showNewReservesOnTrip,
+      idTrip: idTrip ?? this.idTrip,
       controller: controller ?? this.controller,
       pickUpLatLng: pickUpLatLng ?? this.pickUpLatLng,
       destinationLatLng: destinationLatLng ?? this.destinationLatLng,

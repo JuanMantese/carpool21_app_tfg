@@ -24,7 +24,7 @@ class TripsContent extends StatelessWidget {
               child: Column(
                 children: [
                  // Mostrar un mensaje si no hay viajes disponibles
-                  if (state.tripsAll!.futureTrips.isEmpty && state.tripsAll!.futureTrips.isEmpty)
+                  if (state.tripsAll!.pastTrips.isEmpty && state.tripsAll!.futureTrips.isEmpty)
                     SizedBox(
                       height: MediaQuery.of(context).size.height - 320, // Ajustando la altura - Quitando padding y margins
                       width: double.infinity,

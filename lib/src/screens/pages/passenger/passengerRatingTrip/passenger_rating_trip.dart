@@ -158,6 +158,14 @@ class _DialogPassengerRatingTripState extends State<DialogPassengerRatingTrip> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const Text(
+                  'Conductor',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 Text(
                   '${widget.tripReservationDetail.driver.name} ${widget.tripReservationDetail.driver.lastName}',
                   style: const TextStyle(
@@ -166,40 +174,40 @@ class _DialogPassengerRatingTripState extends State<DialogPassengerRatingTrip> {
                     fontSize: 20,
                   ),
                 ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Perfil',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Icon(Icons.info_outline, size: 16, color: Colors.blue),
-                      ],
-                    ),
-                    SizedBox(width: 10),
-                    Row(
-                      children: [
-                        Text(
-                          'Vehículo',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Icon(Icons.info_outline, size: 16, color: Colors.blue),
-                      ],
-                    ),
-                  ],
-                ),
+                // const Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Row(
+                //       children: [
+                //         Text(
+                //           'Perfil',
+                //           style: TextStyle(
+                //             fontSize: 14,
+                //             color: Colors.blue,
+                //             fontWeight: FontWeight.w500,
+                //           ),
+                //         ),
+                //         SizedBox(width: 4),
+                //         Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                //       ],
+                //     ),
+                //     SizedBox(width: 10),
+                //     Row(
+                //       children: [
+                //         Text(
+                //           'Vehículo',
+                //           style: TextStyle(
+                //             fontSize: 14,
+                //             color: Colors.blue,
+                //             fontWeight: FontWeight.w500,
+                //           ),
+                //         ),
+                //         SizedBox(width: 4),
+                //         Icon(Icons.info_outline, size: 16, color: Colors.blue),
+                //       ],
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ],
@@ -251,6 +259,9 @@ class _DialogPassengerRatingTripState extends State<DialogPassengerRatingTrip> {
               }
             });
           },
+          selectedColor: const Color.fromARGB(55, 0, 169, 144),
+          showCheckmark: true, // Remove checkmark
+          shape: const StadiumBorder() // Shape the chip
         );
       }).toList(),
     );

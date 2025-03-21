@@ -2,14 +2,14 @@
 import 'dart:ui';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
 import 'package:carpool_21_app/src/domain/utils/resource.dart';
-import 'package:carpool_21_app/src/screens/pages/driver/driverRaitingTrip/driver_rating_trip.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_bloc.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_event.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_state.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/map_trip_driver_content.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapTripDriverPage extends StatefulWidget {
@@ -26,6 +26,7 @@ class _MapTripDriverState extends State<MapTripDriverPage> {
   late MapTripDriverBloc mapTripDriverBloc;
 
   bool _isLoading = false;
+  bool _hasFinalizedTrip = false;
 
   // Inicializando variables
   String? pickUpNeighborhood;
@@ -101,29 +102,44 @@ class _MapTripDriverState extends State<MapTripDriverPage> {
           }
 
           // Success Status
-          if (resEndTrip is Success) {
+          if (!_hasFinalizedTrip && resEndTrip is Success) {
             final resTripDetail = state.responseGetTripDetail;
   
             if (resTripDetail is Success) {
               print('Viaje Finalizado Exitosamente >>>>>>>>>>>>>>>>>>>>>>>>>>>');
               TripDetail tripDetail = resTripDetail.data as TripDetail; 
 
-              // Saliendo del Viaje y Calificando a los Pasajeros
-              Navigator.of(context).pop();
-              DialogDriverRatingTrip(
-                context: context,
-                tripDetail: tripDetail,
-              );
+              // Emitiendo finalización del viaje a los pasajeros
+              context.read<MapTripDriverBloc>().add(ChangeTripStatus(idTrip: tripDetail.idTrip));
 
-              Fluttertoast.showToast(msg: 'Viaje finalizado', toastLength: Toast.LENGTH_LONG);
+              context.read<MapTripDriverBloc>().add(EmitUpdateStatusTripSocketIO());
+
+              context.read<MapTripDriverBloc>().add(SetTripFinished(tripFinished: true));
+
+              // Saliendo del Viaje y Calificando a los Pasajeros
+              context.go('/driver/0');
+
+              showOverlayMessage(
+                context, 
+                'Gracias por viajar con nosotros',
+                customTitle: 'Viaje finalizado exitosamente',
+                type: AlertType.success
+              );
+            
+              // Actualizamos el flag para indicar que el viaje ya fue finalizado
+              setState(() {
+                _hasFinalizedTrip = true;
+              });
             }
           }
 
           // Error Status
           else if (resEndTrip is ErrorData) {
-            Fluttertoast.showToast(
-              msg: 'Error al finalizar el viaje: ${resEndTrip.message}',
-              toastLength: Toast.LENGTH_LONG,
+            showOverlayMessage(
+              context, 
+              resEndTrip.message,
+              customTitle: 'Error al finalizar el viaje',
+              type: AlertType.error
             );
           }
         },
@@ -133,28 +149,18 @@ class _MapTripDriverState extends State<MapTripDriverPage> {
               builder: (context, state) {
                 final resTripDetail = state.responseGetTripDetail;
             
-                // Verifica si el Controller del Map se inicializo completamente antes de entrar
-                if (state.controller == null) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-            
                 if (resTripDetail is Loading) {
                   return const Center(child: CircularProgressIndicator());
                 }
             
                 // Success Status
                 else if (resTripDetail is Success) {
+                  // Verifica si el Controller del Map se inicializo completamente antes de entrar
+                  if (state.controller == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
                   TripDetail tripDetail = resTripDetail.data as TripDetail;
-            
-                  // context.read<MapTripDriverBloc>().add(AddMarkerPickup(
-                  //   lat: tripDetail.pickupLat,
-                  //   lng: tripDetail.pickupLng
-                  // ));
-            
-                  // context.read<MapTripDriverBloc>().add(AddMarkerDestination(
-                  //   lat: tripDetail.destinationLat,
-                  //   lng: tripDetail.destinationLng
-                  // ));
             
                   return Scaffold(
                     body: MapTripDriverContent(state, tripDetail)
@@ -164,10 +170,13 @@ class _MapTripDriverState extends State<MapTripDriverPage> {
                 // Error Status
                 else if (resTripDetail is ErrorData) {
                   Future.microtask(() {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(resTripDetail.message)),
+                    showOverlayMessage(
+                      context, 
+                      resTripDetail.message,
+                      customTitle: 'Viaje en vivo no disponible',
+                      type: AlertType.error
                     );
-                    Navigator.of(context).pop(); // Redirige al Home
+                    context.pop(); // Redirige al Home
                   });
             
                   return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige

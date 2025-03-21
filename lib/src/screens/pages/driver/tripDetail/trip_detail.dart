@@ -6,6 +6,7 @@ import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_det
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_event.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_state.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/trip_detail_content.dart';
+import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -89,15 +90,21 @@ class _TripDetailPageState extends State<TripDetailPage> {
               'idTrip': tripStatusData.idTrip
             });
 
+            context.read<TripDetailBloc>().add(EmitUpdateStatusTripSocketIO());
+
             Fluttertoast.showToast(msg: 'Viaje iniciado', toastLength: Toast.LENGTH_LONG);
           }
 
           // Error Status
           else if (resStartTrip is ErrorData) {
-            Fluttertoast.showToast(
-              msg: 'Error al iniciar el viaje: ${resStartTrip.message}',
-              toastLength: Toast.LENGTH_LONG,
-            );
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showOverlayMessage(
+                context, 
+                resStartTrip.message,
+                customTitle: 'Error al iniciar el viaje: ${resStartTrip.message}',
+                type: AlertType.error
+              );
+            });
           }
         },
         child: Stack(
@@ -121,10 +128,13 @@ class _TripDetailPageState extends State<TripDetailPage> {
                 // Error Status
                 else if (responseTripDetail is ErrorData) {
                   Future.microtask(() {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(responseTripDetail.message)),
+                    showOverlayMessage(
+                      context, 
+                      responseTripDetail.message,
+                      customTitle: 'Error al obtener el detalle del viaje',
+                      type: AlertType.error
                     );
-                    Navigator.of(context).pop(); // Redirige al Home
+                    context.pop(); // Redirige al Home
                   });
 
                   return const SizedBox.shrink(); // Devuelve un widget vacío mientras se redirige

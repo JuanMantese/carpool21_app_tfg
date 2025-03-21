@@ -58,7 +58,8 @@ List<BlocProvider> blocProviders = [
   // Views
   BlocProvider<PassengerHomeViewBloc>(create: (context) => PassengerHomeViewBloc(
     locator<AuthUseCases>(), 
-    locator<ReserveUseCases>()
+    locator<ReserveUseCases>(),
+    context.read<SocketIOBloc>()
   )),
   BlocProvider<DriverHomeViewBloc>(create: (context) => DriverHomeViewBloc(
     locator<AuthUseCases>(), 

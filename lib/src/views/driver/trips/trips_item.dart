@@ -1,6 +1,9 @@
 
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/tripDetail/bloc/trip_detail_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -112,8 +115,9 @@ class TripsItem extends StatelessWidget {
                     // if (tripType != 'historicalTrips') 
                     //   _chatButton(),
 
+                    // _startButton(context),
                     const SizedBox(height: 6),
-                    
+
                     if (tripType == 'futureTrips') 
                       _cancelButton(),
                       
@@ -195,6 +199,50 @@ class TripsItem extends StatelessWidget {
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ]
+      ),
+    );
+  }
+
+  Widget _startButton(BuildContext context) {
+    return Container(
+      width: 190,
+      height: 40,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color.fromRGBO(0, 117, 255, 0.66), // Top color
+            Color.fromRGBO(0, 163, 255, 0.43), // Top color
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ElevatedButton(
+        onPressed: () {
+          context.read<TripDetailBloc>().add(ChangeTripStatus(idTrip: tripDetail!.idTrip));
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent, 
+          padding: const EdgeInsets.symmetric(
+            horizontal: 1.0,
+            vertical: 1.0,
+          ),
+          minimumSize: const Size(double.infinity, 20), // width and heigh
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        child: const Text(
+          'Iniciar Viaje',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontFamily: "Montserrat",
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

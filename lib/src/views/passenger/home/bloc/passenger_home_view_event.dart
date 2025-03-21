@@ -18,3 +18,12 @@ class GetUserInfo extends PassengerHomeViewEvent {
 
 class GetCurrentReserve extends PassengerHomeViewEvent {} 
 
+// Emitimos la finalizacion del viaje
+class TripStartEvent extends PassengerHomeViewEvent {}
+
+// Reseteo los valores del State al salir de la pantalla
+class ResetState extends PassengerHomeViewEvent {}
+
+// Socket IO
+class ListenUpdateStatusTripSocketIO extends PassengerHomeViewEvent {}
+

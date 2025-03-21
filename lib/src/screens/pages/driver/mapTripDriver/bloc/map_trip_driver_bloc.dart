@@ -51,7 +51,7 @@ class MapTripDriverBloc extends Bloc<MapTripDriverEvent, MapTripDriverState> {
 
         emit(
           state.copyWith(
-            idPassenger: 12,
+            idTrip: data.idTrip,
             pickUpLatLng: LatLng(data.pickupLat, data.pickupLng),
             destinationLatLng: LatLng(data.destinationLat, data.destinationLng)
           )
@@ -268,7 +268,6 @@ class MapTripDriverBloc extends Bloc<MapTripDriverEvent, MapTripDriverState> {
         print(state.position!.longitude);
         print(state.destinationLatLng);
 
-
         // Obteniendo las coordenadas del origen y destino
         List<LatLng> polylineCoordinates = await geolocationUseCases.getPolyline.run(
           LatLng(state.position!.latitude, state.position!.longitude), 
@@ -343,22 +342,44 @@ class MapTripDriverBloc extends Bloc<MapTripDriverEvent, MapTripDriverState> {
         ),
       );
     });
+
+    // Iniciamos el viaje - Cambiamos el estado del viaje en la BD
+    on<SetTripFinished>((event, emit) async {
+      print('Entrando a SetTripFinished -------------------------------------');
+
+      emit(
+        state.copyWith(
+          tripFinished: event.tripFinished,
+        ),
+      );
+    });
  
-    // Agregando la ruta al mapa
+    // Emitiendo la posicion del conductor aca vez que su ubicacion cambia
     on<EmitDriverPositionSocketIO>((event, emit) async {
       print('Emitiendo la ubicación del driver >>>>>>>>>>>>>>>>>>>>>');
+      print(state.position!.latitude);
+      print(state.position!.longitude);
       
       if(socketIOBloc.state.socket != null) {
-        if (state.idPassenger != null) {
-          print('Emitiendo');
-          double lat = double.parse('-31.419881');
-          double lng = double.parse('-64.188243');
-          socketIOBloc.state.socket?.emit('change_driver_position_trip', {
-            "id_passenger": 12,
-            "lat": lat,
-            'lng': lng
-          });
-        }
+        double lat = double.parse(state.position!.latitude.toString()); // Ex: double.parse('-31.419881')
+        double lng = double.parse(state.position!.longitude.toString()); // Ex: double.parse('-64.188243')
+        socketIOBloc.state.socket?.emit('change_driver_position_trip', {
+          "trip_id": state.idTrip,
+          "lat": lat,
+          'lng': lng
+        });
+      }
+    });
+
+    // Emitiendo la notificacion de viaje finalizado
+    on<EmitUpdateStatusTripSocketIO>((event, emit) async {
+      print('Emitiendo la finalización del viaje >>>>>>>>>>>>>>>>>>>>>');
+      
+      if(socketIOBloc.state.socket != null) {
+        print('Emitiendo');
+        socketIOBloc.state.socket?.emit('update_status_trip', {
+          "trip_id": state.idTrip,
+        });
       }
     });
     

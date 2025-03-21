@@ -40,4 +40,11 @@ class AddPolyline extends TripDetailEvent {}
 class ResetState extends TripDetailEvent {}
 
 // Socket IO
-class ListenTripReservesSocketIO extends TripDetailEvent {}
+class ListenTripReservesSocketIO extends TripDetailEvent {
+  final int idTrip;
+
+  ListenTripReservesSocketIO({
+    required this.idTrip,
+  });
+}
+class EmitUpdateStatusTripSocketIO extends TripDetailEvent {}

@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_print
 import 'dart:async';
 import 'package:carpool_21_app/blocSocketIO/socket_io_bloc.dart';
+import 'package:carpool_21_app/src/domain/models/auth_response.dart';
 import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
+import 'package:carpool_21_app/src/domain/useCases/auth/auth_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/driver-trip-request/driver_trip_request_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/geolocation/geolocation_use_cases.dart';
 import 'package:carpool_21_app/src/domain/useCases/socket/socket_use_cases.dart';
@@ -14,6 +16,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
 
+  AuthUseCases authUseCases;
   GeolocationUseCases geolocationUseCases;
   DriverTripRequestsUseCases driverTripRequestsUseCases;
   SocketUseCases socketUseCases;
@@ -21,6 +24,7 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
 
   // Constructor
   TripDetailBloc(
+    this.authUseCases,
     this.geolocationUseCases, 
     this.driverTripRequestsUseCases,
     this.socketUseCases, 
@@ -56,6 +60,7 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
 
         emit(
           state.copyWith(
+            idTrip: tripDetail.idTrip,
             pickUpLatLng: LatLng(tripDetail.pickupLat, tripDetail.pickupLng),
             destinationLatLng: LatLng(tripDetail.destinationLat, tripDetail.destinationLng)
           )
@@ -65,7 +70,7 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
         add(TripDetailInitMap());
 
         // Ejecutamos el evento para escuchar los cambios por Socket.IO
-        add(ListenTripReservesSocketIO());
+        add(ListenTripReservesSocketIO(idTrip: tripDetail.idTrip));
 
       } else if (tripDetailRes is ErrorData<TripDetail>) {
         print('Error al obtener los datos del Detalle de Viaje: ${tripDetailRes.message}');
@@ -199,34 +204,50 @@ class TripDetailBloc extends Bloc<TripDetailEvent, TripDetailState> {
       print(socketIOBloc.state.socket);
       print(socketIOBloc.state.socket?.connected);
 
-      if (socketIOBloc.state.socket != null && socketIOBloc.state.socket!.connected) {
-        // Creamos un StreamController para gestionar la emisión
-        final controller = StreamController<void>();
-        
-        // Esta NOTIFICACIÓN solo la escucha el usuario al cual pertenece el viaje
-        // socketIOBloc.state.socket?.on('new_reserve_trip_notification', (data) {
-        //   print('Notificación recibida: $data');
-        // });
+      AuthResponse? authResponse = await authUseCases.getUserSession.run();
 
-        socketIOBloc.state.socket?.on('create_reserve_trip_notification/${12}/${110}', (data) async {
-          print('Obteniendo la Nueva Reserva Creada - Socket IO');
-          print(data);
+      if (authResponse != null && authResponse.user != null) {
+        print('Datos del usuario obtenidos - Trip Detail: ${authResponse.user?.idUser}');
 
-          // Habilitando el mensaje de nuevos viajes disponibles
-          emit(state.copyWith(
-            showNewReservesOnTrip: true, 
-          ));
+        if (socketIOBloc.state.socket != null && socketIOBloc.state.socket!.connected) {
+          // Creamos un StreamController para gestionar la emisión
+          final controller = StreamController<void>();
+          
+          // Esta NOTIFICACIÓN solo la escucha el usuario al cual pertenece el viaje
+          socketIOBloc.state.socket?.on('create_reserve_trip_notification/${authResponse.user?.idUser}/${event.idTrip}', (data) async {
+            print('Obteniendo la Nueva Reserva Creada - Socket IO');
+            print(data);
 
-          // Cuando el evento se haya procesado, cerramos el controller
-          controller.add(null);
+            // Habilitando el mensaje de nuevos viajes disponibles
+            emit(state.copyWith(
+              showNewReservesOnTrip: true, 
+            ));
+
+            // Cuando el evento se haya procesado, cerramos el controller
+            controller.add(null);
+          });
+
+          // Esperar a que el evento se haya completado
+          await controller.stream.first;
+          await controller.close();
+
+          // Cerramos la escucha para no recibir más eventos hasta que se recargue la pantalla
+          socketIOBloc.state.socket?.off('create_reserve_trip_notification/${authResponse.user?.idUser}/${event.idTrip}');
+        } else {
+          print('******************* Driver Trip Detail Emit Socket - AuthResponse es Null *******************');
+        }
+      }
+    });
+
+    // Emitiendo la notificacion de viaje finalizado
+    on<EmitUpdateStatusTripSocketIO>((event, emit) async {
+      print('Emitiendo el comienzo del viaje >>>>>>>>>>>>>>>>>>>>>');
+      
+      if(socketIOBloc.state.socket != null) {
+        print('Emitiendo');
+        socketIOBloc.state.socket?.emit('update_status_trip', {
+          "trip_id": state.idTrip,
         });
-
-        // Esperar a que el evento se haya completado
-        await controller.stream.first;
-        await controller.close();
-
-        // Cerramos la escucha para no recibir más eventos hasta que se recargue la pantalla
-        socketIOBloc.state.socket?.off('create_reserve_trip_notification/${12}/${110}');
       }
     });
 

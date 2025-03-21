@@ -461,7 +461,9 @@ class TripDetailContent extends StatelessWidget {
               
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<TripDetailBloc>().add(ChangeTripStatus(idTrip: tripDetail!.idTrip));
+                  },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.only(
                       top: 10,
@@ -480,65 +482,104 @@ class TripDetailContent extends StatelessWidget {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        color: Color(0xFF00A98F),
-                      ),
-                      SizedBox(width: 16),
                       Text(
-                        'Editar',
+                        'Iniciar Viaje',
                         style: TextStyle(
                           color: Color(0xFF00A98F),
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
                       ),
+                      SizedBox(width: 16),
+                      Icon(
+                        Icons.arrow_forward_ios_outlined,
+                        color: Color(0xFF00A98F),
+                      ),
                     ],
                   ),
                 ),
               ),
+
+              // Expanded(
+              //   child: ElevatedButton(
+              //     onPressed: () {},
+              //     style: OutlinedButton.styleFrom(
+              //       padding: const EdgeInsets.only(
+              //         top: 10,
+              //         bottom: 10,
+              //       ),
+              //       backgroundColor: const Color(0xFFF9F9F9),
+              //       elevation: 0,
+              //       side: const BorderSide(
+              //         color: Color(0xFF00A98F),
+              //         width: 2.0
+              //       ),
+              //       shape: const RoundedRectangleBorder(
+              //         borderRadius: BorderRadius.all(Radius.circular(10)),
+              //       ),
+              //     ),
+              //     child: const Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Icon(
+              //           Icons.edit_outlined,
+              //           color: Color(0xFF00A98F),
+              //         ),
+              //         SizedBox(width: 16),
+              //         Text(
+              //           'Editar',
+              //           style: TextStyle(
+              //             color: Color(0xFF00A98F),
+              //             fontWeight: FontWeight.w500,
+              //             fontSize: 16,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ]
           ),
 
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<TripDetailBloc>().add(ChangeTripStatus(idTrip: tripDetail!.idTrip));
-              },
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.only(
-                  top: 10,
-                  left: 0,
-                  right: 0,
-                  bottom: 10,
-                ),
-                backgroundColor: const Color(0xFFF9F9F9),
-                elevation: 0,
-                side: const BorderSide(
-                  color: Color.fromRGBO(0, 66, 142, 0.659),
-                  width: 2.0
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                disabledBackgroundColor: const Color.fromARGB(170, 217, 198, 198),
-                disabledForegroundColor: const Color.fromARGB(255, 108, 100, 100),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Iniciar Viaje',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: ElevatedButton(
+          //     onPressed: () {
+          //       context.read<TripDetailBloc>().add(ChangeTripStatus(idTrip: tripDetail!.idTrip));
+          //     },
+          //     style: OutlinedButton.styleFrom(
+          //       padding: const EdgeInsets.only(
+          //         top: 10,
+          //         left: 0,
+          //         right: 0,
+          //         bottom: 10,
+          //       ),
+          //       backgroundColor: const Color(0xFFF9F9F9),
+          //       elevation: 0,
+          //       side: const BorderSide(
+          //         color: Color.fromRGBO(0, 66, 142, 0.659),
+          //         width: 2.0
+          //       ),
+          //       shape: const RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.all(Radius.circular(10)),
+          //       ),
+          //       disabledBackgroundColor: const Color.fromARGB(170, 217, 198, 198),
+          //       disabledForegroundColor: const Color.fromARGB(255, 108, 100, 100),
+          //     ),
+          //     child: const Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text(
+          //           'Iniciar Viaje',
+          //           style: TextStyle(
+          //             fontWeight: FontWeight.w600,
+          //             fontSize: 16,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -379,7 +379,11 @@ class MapTripDriverContent extends StatelessWidget {
         ? () {
             context.read<MapTripDriverBloc>().add(ChangeTripStatus(idTrip: tripDetail.idTrip));
           }
-        : null,
+        // TODO: Descomentar para que haya validacion del boton ->   : null,
+        : () {
+            context.read<MapTripDriverBloc>().add(ChangeTripStatus(idTrip: tripDetail.idTrip));
+          },
+
       style: ButtonStyle(
         // backgroundColor: const Color(0xFF00A98F),
         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {

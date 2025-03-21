@@ -109,8 +109,17 @@ class ChangeTripStatus extends MapTripDriverEvent {
   });
 }
 
+class SetTripFinished extends MapTripDriverEvent {
+  final bool tripFinished;
+  
+  SetTripFinished({
+    required this.tripFinished
+  });
+}
+
 // Reseteo los valores del State al salir de la pantalla
 class ResetState extends MapTripDriverEvent {}
 
 // Socket IO
 class EmitDriverPositionSocketIO extends MapTripDriverEvent {}
+class EmitUpdateStatusTripSocketIO extends MapTripDriverEvent {}

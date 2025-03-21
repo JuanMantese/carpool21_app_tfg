@@ -122,16 +122,16 @@ class PassengerHomeContent extends StatelessWidget {
               width: 300,
             ),
             const SizedBox(width: 16),
-            IconButton(
-              icon: const Icon(
-                Icons.notifications,
-                size: 36,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                print("Notificaciones");
-              },
-            ),
+            // IconButton(
+            //   icon: const Icon(
+            //     Icons.notifications,
+            //     size: 36,
+            //     color: Colors.white,
+            //   ),
+            //   onPressed: () {
+            //     print("Notificaciones");
+            //   },
+            // ),
           ],
         ),
       ),

@@ -1,5 +1,11 @@
 import 'package:carpool_21_app/config/router/app_router.dart';
 import 'package:carpool_21_app/src/data/dataSource/remote/services/users_service.dart';
+import 'package:carpool_21_app/src/domain/models/trip_detail.dart';
+import 'package:carpool_21_app/src/domain/utils/resource.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/driverRaitingTrip/driver_rating_trip.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_event.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapTripDriver/bloc/map_trip_driver_state.dart';
 import 'package:carpool_21_app/src/views/driver/home/bloc/driver_home_view_bloc.dart';
 import 'package:carpool_21_app/src/views/driver/home/bloc/driver_home_view_event.dart';
 import 'package:carpool_21_app/src/views/driver/home/bloc/driver_home_view_state.dart';
@@ -19,7 +25,7 @@ class DriverHomeView extends StatefulWidget {
 class _DriverHomeViewState extends State<DriverHomeView> with RouteAware {
   // Obtén la instancia de UsersService
   UsersService userService = GetIt.instance<UsersService>();
-  
+
   @override
   void initState() {
     super.initState();
@@ -54,25 +60,49 @@ class _DriverHomeViewState extends State<DriverHomeView> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DriverHomeViewBloc, DriverHomeViewState>(
-      builder: (context, state) {
-        switch (state.responseStatus) {
-          case DriverHomeViewStatus.loading:
-            return const Center(child: CircularProgressIndicator());
-          case DriverHomeViewStatus.success:
-            return Scaffold(
-              body: DriverHomeContent(state: state),
-            );
-          case DriverHomeViewStatus.error:
-            return Scaffold(
-              body: Center(child: Text(state.errorMessage ?? 'Error desconocido')),
-            );
-          default:
-            return Scaffold(
-              body: Center(child: Text(state.errorMessage ?? 'Error desconocido - Default')),
-            );
+    return BlocListener<MapTripDriverBloc, MapTripDriverState>(
+      listener: (context, state) {
+        if (state.tripFinished) {
+          final resTripDetail = state.responseGetTripDetail;
+
+          if (resTripDetail is Success) {
+            TripDetail tripDetail = resTripDetail.data as TripDetail; 
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              DialogDriverRatingTrip(
+                context: context,
+                tripDetail: tripDetail,
+              );
+            });
+            context.read<MapTripDriverBloc>().add(SetTripFinished(tripFinished: false)); // Resetear el estado
+          }
         }
       },
+      child: BlocBuilder<DriverHomeViewBloc, DriverHomeViewState>(
+        builder: (context, state) {
+          switch (state.responseStatus) {
+            case DriverHomeViewStatus.loading:
+              return const Center(child: CircularProgressIndicator());
+            case DriverHomeViewStatus.success:
+              return Scaffold(
+                body: DriverHomeContent(state: state),
+              );
+            case DriverHomeViewStatus.error:
+              return Scaffold(
+                body: Center(
+                  child: Text(state.errorMessage ?? 'Error desconocido')),
+              );
+            default:
+              return Scaffold(
+                body: Center(
+                  child: Text(
+                    state.errorMessage ?? 'Error desconocido - Default'
+                  )
+                ),
+              );
+          }
+        },
+      ),
     );
   }
 }
