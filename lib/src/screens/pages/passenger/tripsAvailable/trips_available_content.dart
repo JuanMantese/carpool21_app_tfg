@@ -86,7 +86,7 @@ class TripsAvailableContent extends StatelessWidget {
           if (filteredRequests.isNotEmpty)
             // Permite listar los viajes disponibles - vienen dentro de una Lista
             Container(
-              margin: const EdgeInsets.only(top: 170, bottom: 40),
+              margin: const EdgeInsets.only(top: 176, bottom: 40),
               padding: const EdgeInsets.only(right: 20, left: 20),
               child: ListView.builder(
                 itemCount: filteredRequests.length,

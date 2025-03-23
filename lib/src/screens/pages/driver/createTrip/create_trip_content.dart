@@ -37,7 +37,7 @@ class CreateTripContent extends StatelessWidget {
     return Column(
       children: [
         _buildTripInfoCard(context),
-        const SizedBox(height: 40.0),
+        const SizedBox(height: 50.0),
         _buildDetailForm(context),
         const SizedBox(height: 16.0),
         CustomButton(

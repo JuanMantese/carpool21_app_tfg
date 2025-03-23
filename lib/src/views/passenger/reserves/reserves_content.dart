@@ -92,8 +92,7 @@ class ReservesContent extends StatelessWidget {
                             thickness: 2,
                           ),
                         ),
-                        ...state.reservesAll!.pastReservations
-                            .map((reserve) {
+                        ...state.reservesAll!.pastReservations.map((reserve) {
                           return Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: ReservesItem(reserve, 'historicalReservations'),

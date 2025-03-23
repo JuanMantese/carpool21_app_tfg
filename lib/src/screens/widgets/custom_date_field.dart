@@ -40,6 +40,22 @@ class _CustomDateFieldState extends State<CustomDateField> {
       initialDate: DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            primaryColor: const Color(0xFF00A48B), // Color principal
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF00A48B), // Color de los botones en el date picker
+              onPrimary: Colors.white, // Color del texto en los botones
+              onSurface: Color(0xFF00A48B), // Color del texto general
+            ),
+            buttonTheme: const ButtonThemeData(
+              textTheme: ButtonTextTheme.primary,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (pickedDate != null) {

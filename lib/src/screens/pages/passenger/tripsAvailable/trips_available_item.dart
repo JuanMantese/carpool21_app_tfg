@@ -81,7 +81,10 @@ class TripsAvailableItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(passengerRequest!.pickupText,
+                      subtitle: Text(
+                        passengerRequest!.pickupText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500
@@ -97,7 +100,10 @@ class TripsAvailableItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(passengerRequest!.destinationText,
+                      subtitle: Text(
+                        passengerRequest!.destinationText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500

@@ -69,7 +69,10 @@ class TripsItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(tripDetail!.pickupText,
+                      subtitle: Text(
+                        tripDetail!.pickupText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500
@@ -85,7 +88,10 @@ class TripsItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(tripDetail!.destinationText,
+                      subtitle: Text(
+                        tripDetail!.destinationText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500

@@ -67,7 +67,10 @@ class ReservesItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(reserveDetail!.tripRequest.pickupText,
+                      subtitle: Text(
+                        reserveDetail!.tripRequest.pickupText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500
@@ -83,7 +86,10 @@ class ReservesItem extends StatelessWidget {
                           fontWeight: FontWeight.bold
                         ),
                       ),
-                      subtitle: Text(reserveDetail!.tripRequest.destinationText,
+                      subtitle: Text(
+                        reserveDetail!.tripRequest.destinationText,
+                        maxLines: 3, // Máximo de 3 líneas
+                        overflow: TextOverflow.ellipsis, // Muestra "..." si el texto es muy largo
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500

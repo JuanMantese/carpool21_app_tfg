@@ -136,7 +136,8 @@ class MapTripPassengerBloc extends Bloc<MapTripPassengerEvent, MapTripPassengerS
         event.lng,
         'Tu conductor',
         '',
-        driverMarkerImg
+        driverMarkerImg,
+        anchor: const Offset(0.5, 0.5),
       );
       print('Añadiendo el Marker V2');
 

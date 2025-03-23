@@ -8,6 +8,8 @@ import 'package:carpool_21_app/src/screens/pages/driver/createTrip/bloc/create_t
 import 'package:carpool_21_app/src/screens/pages/driver/createTrip/bloc/create_trip_event.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/createTrip/bloc/create_trip_state.dart';
 import 'package:carpool_21_app/src/screens/pages/driver/createTrip/create_trip_content.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapSeeker/bloc/driver_map_seeker_bloc.dart';
+import 'package:carpool_21_app/src/screens/pages/driver/mapSeeker/bloc/driver_map_seeker_event.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_dialog.dart';
 import 'package:carpool_21_app/src/screens/widgets/custom_icon_back.dart';
 import 'package:carpool_21_app/src/screens/widgets/floating_alert.dart';
@@ -192,6 +194,7 @@ class _CreateTripState extends State<CreateTripPage> {
                           icon: Icons.check_circle_rounded,
                           onPressedSend: () {
                             context.read<CreateTripBloc>().add(CreateTripRequest());
+                            context.read<DriverMapFinderBloc>().add(DriverMapFinderResetEvent());
                           },
                           textSendBtn: 'Crear',
                           textCancelBtn: 'Cancelar',

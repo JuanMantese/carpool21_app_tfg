@@ -52,9 +52,11 @@ class CarRegisterContent extends StatelessWidget {
                         const Spacer(),
                         CustomButton(
                           onPressed: () {
-                            if (state.formKey!.currentState!.validate()) {
-                              // Dirigimos a la pantalla de registro del Seguro
-                              context.read<CarRegisterBloc>().add(NextStep());
+                            if (state.formKey != null) {  
+                              if (state.formKey!.currentState!.validate()) {
+                                // Dirigimos a la pantalla de registro del Seguro
+                                context.read<CarRegisterBloc>().add(NextStep());
+                              } 
                             } else {
                               print('Uno o más formularios no son válidos');
                             }
